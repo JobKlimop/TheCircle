@@ -1,4 +1,4 @@
-package thecircle.seechange;
+package com.example.koend.seechange;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("thecircle.seechange", appContext.getPackageName());
+        assertEquals("com.example.koend.opentokstreaming", appContext.getPackageName());
     }
 }

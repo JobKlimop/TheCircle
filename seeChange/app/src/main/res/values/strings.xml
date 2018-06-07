@@ -1,3 +1,11 @@
 <resources>
-    <string name="app_name">OpenTokStreaming</string>
+    <string name="app_name">seeChange</string>
+    <string name="controlStart">Start</string>
+    <string name="camera">Camera</string>
+    <string name="followers">Followers</string>
+    <string name="watching">Watching</string>
+    <string name="status">Offline</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

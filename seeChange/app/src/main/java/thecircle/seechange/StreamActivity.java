@@ -1,5 +1,10 @@
-package com.example.koend.seechange;
+package thecircle.seechange;
 
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
+import android.content.Context;
+import android.content.Intent;
+import android.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -10,20 +15,24 @@ import com.opentok.android.PublisherKit;
 import com.opentok.android.OpentokError;
 import android.support.annotation.NonNull;
 import android.Manifest;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
 
-public class MainActivity extends AppCompatActivity implements  Session.SessionListener, PublisherKit.PublisherListener{
+public class StreamActivity extends AppCompatActivity implements  Session.SessionListener, PublisherKit.PublisherListener{
 
     private static String API_KEY = "46134312";
     private static String SESSION_ID = "2_MX40NjEzNDMxMn5-MTUyODM2ODczNzQ0OH5CeFE4aGNkdGF2OEdKK3dtOURTdjF1ODB-UH4";
     private static String TOKEN = "T1==cGFydG5lcl9pZD00NjEzNDMxMiZzaWc9YjIwMTU4YjA1MGI3MzQzMTdlNGJkNmNlMzU1YTc4ZDUwNDU0M2M1YzpzZXNzaW9uX2lkPTJfTVg0ME5qRXpORE14TW41LU1UVXlPRE0yT0Rjek56UTBPSDVDZUZFNGFHTmtkR0YyT0VkS0szZHRPVVJUZGpGMU9EQi1VSDQmY3JlYXRlX3RpbWU9MTUyODM2ODczOCZub25jZT0wLjc2MTY5MDk5ODE4MTU2ODkmcm9sZT1wdWJsaXNoZXImZXhwaXJlX3RpbWU9MTUyODQ1NTEzOCZpbml0aWFsX2xheW91dF9jbGFzc19saXN0PQ==";
     private static String currentStreamerId = "1";
-    private static final String LOG_TAG = MainActivity.class.getSimpleName();
+    private static final String LOG_TAG = StreamActivity.class.getSimpleName();
     private static final int RC_SETTINGS_SCREEN_PERM = 123;
     private static final int RC_VIDEO_APP_PERM = 124;
 
@@ -36,36 +45,45 @@ public class MainActivity extends AppCompatActivity implements  Session.SessionL
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_stream);
 
-        Button startButton = (Button) findViewById(R.id.startStreaming);
-        Button stopButton = (Button) findViewById(R.id.stopStreaming);
+        final TextView status = (TextView) findViewById(R.id.status);
+        final ImageView startButton = (ImageView) findViewById(R.id.controlStart);
+        //Button stopButton = (Button) findViewById(R.id.stopStreaming);
+
 
 
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(mSession == null) {
+                    startButton.setImageResource(R.drawable.stop);
+                    status.setText("Live");
+                    status.setBackgroundColor(getResources().getColor(R.color.red));
                     requestPermissions();
                 } else {
-                    //nothing
-                }
-
-            }
-        });
-
-        stopButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(mSession != null) {
+                    startButton.setImageResource(R.drawable.play);
+                    status.setText("Offline");
+                    status.setBackgroundColor(getResources().getColor(R.color.darkgrey));
                     mSession.disconnect();
                     mSession = null;
-
-                } else {
-                    // nothing
                 }
+
             }
         });
+
+//        stopButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                if(mSession != null) {
+//                    mSession.disconnect();
+//                    mSession = null;
+//
+//                } else {
+//                    // nothing
+//                }
+//            }
+//        });
 
 
     }
@@ -75,14 +93,24 @@ public class MainActivity extends AppCompatActivity implements  Session.SessionL
 
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
-    }  
-
+    }
+    static Context mContext;
+    public CameraFragment cameraFragment;
     @AfterPermissionGranted(RC_VIDEO_APP_PERM)
+
     private void requestPermissions() {
         String[] perms = { Manifest.permission.INTERNET, Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO };
         if (EasyPermissions.hasPermissions(this, perms)) {
+//            LayoutInflater inflater = getLayoutInflater();
+//
+//            View camera = inflater.inflate(R.layout.fragment_camera, null);
+//            FrameLayout fragment = (FrameLayout) camera.findViewById(R.id.camera);
+//
+//            mPublisherViewContainer = fragment;
+
             // initialize view objects from your layout
-            mPublisherViewContainer = (FrameLayout)findViewById(R.id.publisher_container);
+
+            mPublisherViewContainer = (FrameLayout) findViewById(R.id.publisher_container);
 
             // initialize and connect to the session
             mSession = new Session.Builder(this, API_KEY, SESSION_ID).build();

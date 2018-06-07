@@ -1,4 +1,4 @@
-package com.example.koend.seechange;
+package thecircle.seechange;
 
 import org.junit.Test;
 

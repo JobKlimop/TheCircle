@@ -1,4 +1,4 @@
-package com.example.koend.seechange.service;
+package thecircle.seechange.Service;
 
 public class Config {
 

@@ -2,7 +2,11 @@
 <resources>
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
-    <color name = "darkgrey">#FF343434</color>
-    <color name = "red">#FFCC0000</color>
+    <color name="colorAccent">#b4b4b4</color>
+    <color name = "darkgrey">#b4b4b4</color>
+    <color name = "red">#cc0000</color>
+    <color name = "white">#ffffff</color>
+    <color name="colorTransBg">#26000000</color>
+    <color name="burgundy">#A30005</color>
+    <color name="lightgrey">#b4b4b4</color>
 </resources>

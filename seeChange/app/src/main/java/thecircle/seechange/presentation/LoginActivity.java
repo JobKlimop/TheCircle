@@ -137,16 +137,15 @@ public class LoginActivity extends AppCompatActivity{
                         }
                         // login succes
                         showProgress(true);
-//                        mAuthTask.execute((Void) null);
                         Intent i = new Intent(getApplicationContext(), StreamActivity.class);
                         startActivity(i);
+                        finish();
 
                     }
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Toast.makeText(LoginActivity.this, "Username or password is incorrect", Toast.LENGTH_SHORT).show();
-
             }
         });
         queue.add(request);
@@ -162,7 +161,6 @@ public class LoginActivity extends AppCompatActivity{
     private boolean isPasswordValid(String password) {
         //TODO: Replace this with your own logic
         return password.length() > 3;
-
     }
 
     /**

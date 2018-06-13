@@ -56,7 +56,8 @@
                 android:layout_height="wrap_content"
                 android:adjustViewBounds="true"
                 android:onClick="toggleBroadcasting"
-                android:src="@drawable/baseline_brightness_1_white_24" />
+                android:src="@drawable/baseline_brightness_1_white_24"
+                android:tint="@color/red" />
 
             <ImageButton
                 android:id="@+id/iPause"

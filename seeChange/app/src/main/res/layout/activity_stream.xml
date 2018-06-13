@@ -8,20 +8,10 @@
     android:id="@+id/root_layout">
 
 
-    <!--
-    <com.google.android.exoplayer.AspectRatioFrameLayout
-        android:id="@+id/cameraPreview_afl"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:layout_centerInParent="true"
-        >
-        -->
     <android.opengl.GLSurfaceView
         android:id="@+id/cameraPreview_surfaceView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-
         android:visibility="gone"
         android:layout_gravity="center" />
     <View
@@ -39,7 +29,8 @@
         android:minHeight="?attr/actionBarSize"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?attr/colorPrimary">
+        android:background="?attr/colorPrimary"
+        android:fitsSystemWindows="true">
 
         <LinearLayout
             android:layout_width="match_parent"

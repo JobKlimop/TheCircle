@@ -41,8 +41,6 @@ import android.support.v7.widget.Toolbar;
 import static thecircle.seechange.presentation.MainActivity.RTMP_BASE_URL;
 
 public class StreamActivity extends AppCompatActivity {
-
-
     private ViewGroup mRootView;
     boolean mIsRecording = false;
     private EditText mStreamNameEditText;

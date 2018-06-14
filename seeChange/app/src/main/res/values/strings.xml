@@ -73,4 +73,7 @@
     <string name="sample_list_load_error">One or more sample lists failed to load</string>
     <string name="stream_not_started">Failed to start. Please check server url and security credentials.</string>
     <string name="title_activity_splash">SplashActivity</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

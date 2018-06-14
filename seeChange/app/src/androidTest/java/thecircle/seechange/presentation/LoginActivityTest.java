@@ -1,7 +1,6 @@
 package thecircle.seechange.presentation;
 
 import android.app.Application;
-import android.os.Bundle;
 import android.os.Parcel;
 import android.support.test.filters.SmallTest;
 import android.support.test.runner.AndroidJUnit4;
@@ -11,10 +10,10 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import com.google.android.exoplayer2.util.Assertions;
-import android.support.test.espresso.Espresso;
-import static android.support.test.espresso.Espresso.closeSoftKeyboard;
+
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
@@ -24,11 +23,9 @@ import static org.junit.Assert.*;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import android.support.test.rule.ActivityTestRule;
-import android.support.test.runner.AndroidJUnit4;
+
 
 import thecircle.seechange.R;
 
@@ -39,5 +36,38 @@ import thecircle.seechange.R;
 @SmallTest
 public class LoginActivityTest extends Application {
 
+    public String TestUsername;
+    public String TestPassword;
+    private AutoCompleteTextView mUsernameView;
+    private EditText mPasswordView;
+    private LoginActivity loginActivity;
+    @Test
+    public void onCreate() {
+
+    }
+
+    @Test
+    public void testLoginSuccess() throws Exception {
+        TestUsername = "mika";
+        TestPassword = "test";
+        assertThat( mUsernameView.getText().toString(), is(TestUsername));
+        assertThat( mPasswordView.getText().toString(), is(TestPassword));
+    }
+//    @Test
+//    public void changeText_sameActivity() {
+//
+//        // Type text and then press the button.
+//        onView(withId(R.id.mUsernameView))
+//                .perform(typeText(TestUsername), closeSoftKeyboard());
+//        onView(withId(R.id.mPasswordView))
+//                .perform(typeText(TestPassword), closeSoftKeyboard());
+//        onView(withId(R.id.mSignInButton)).perform(click());
+//
+//        // Check that the text was changed.
+//        onView(withId(R.id.textToBeChanged))
+//                .check(matches(withText(TestUsername)));
+//        onView(withId(R.id.textToBeChanged))
+//                .check(matches(withText(TestPassword)));
+//    }
 
 }

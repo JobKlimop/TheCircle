@@ -31,6 +31,8 @@
         <activity android:name=".presentation.LoginActivity" />
 
         <service android:name="io.antmedia.android.broadcaster.LiveVideoBroadcaster" />
+
+        <activity android:name=".presentation.ChatActivity"></activity>
     </application>
 
 </manifest>

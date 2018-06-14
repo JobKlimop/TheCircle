@@ -20,19 +20,23 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.NoActionBar">
-        <activity android:name=".presentation.MainActivity">
+        <activity android:name=".presentation.TestActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".presentation.StreamActivity" />
         <activity android:name=".presentation.LoginActivity" />
 
         <service android:name="io.antmedia.android.broadcaster.LiveVideoBroadcaster" />
 
-        <activity android:name=".presentation.ChatActivity"></activity>
+        <activity android:name=".presentation.ChatActivity" />
+        <activity android:name=".presentation.StreamActivity" />
+        <!--<activity-->
+            <!--android:name=".presentation.TestActivity"-->
+            <!--android:label="@string/title_activity_test"-->
+            <!--android:theme="@style/Theme.AppCompat.NoActionBar"></activity>-->
     </application>
 
 </manifest>

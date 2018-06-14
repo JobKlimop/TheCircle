@@ -8,20 +8,10 @@
     android:id="@+id/root_layout">
 
 
-    <!--
-    <com.google.android.exoplayer.AspectRatioFrameLayout
-        android:id="@+id/cameraPreview_afl"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:layout_centerInParent="true"
-        >
-        -->
     <android.opengl.GLSurfaceView
         android:id="@+id/cameraPreview_surfaceView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-
         android:visibility="gone"
         android:layout_gravity="center" />
     <View
@@ -39,7 +29,8 @@
         android:minHeight="?attr/actionBarSize"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?attr/colorPrimary">
+        android:background="?attr/colorPrimary"
+        android:fitsSystemWindows="true">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -58,38 +49,7 @@
             <!--android:src="@drawable/ic_settings_white_24dp"-->
             <!--style="?borderlessButtonStyle"-->
             <!--/>-->
-            <ImageButton
-                android:id="@+id/toggle_broadcasting"
-                style="?attr/borderlessButtonStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:adjustViewBounds="true"
-                android:onClick="toggleBroadcasting"
-                android:src="@drawable/baseline_brightness_1_white_24" />
 
-            <ImageButton
-                android:id="@+id/iPause"
-                style="?attr/borderlessButtonStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:adjustViewBounds="true"
-                android:onClick="changeCamera"
-                android:src="@drawable/baseline_pause_circle_filled_white_24" />
-
-            <ImageButton
-                android:id="@+id/changeCameraButton"
-                style="?attr/borderlessButtonStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:adjustViewBounds="true"
-                android:onClick="changeCamera"
-                android:src="@drawable/ic_switch_camera_white_24dp" />
-
-
-            <android.support.v4.widget.Space
-                android:layout_width="100dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1" />
 
             <TextView
                 android:id="@+id/stream_live_status"
@@ -103,6 +63,41 @@
                 android:gravity="center"
                 android:padding="5dp"
                 android:text="@string/live_indicator" />
+
+            <android.support.v4.widget.Space
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+            <ImageButton
+                android:id="@+id/changeCameraButton"
+                style="?attr/borderlessButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:onClick="changeCamera"
+                android:src="@drawable/ic_switch_camera_white_24dp"
+                android:tint="@android:color/holo_green_light" />
+
+            <ImageButton
+                android:id="@+id/iPause"
+                style="?attr/borderlessButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:onClick="changeCamera"
+                android:src="@drawable/baseline_pause_circle_filled_white_24"
+                android:tint="@android:color/holo_orange_light" />
+
+            <ImageButton
+                android:id="@+id/toggle_broadcasting"
+                style="?attr/borderlessButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:onClick="toggleBroadcasting"
+                android:src="@drawable/baseline_brightness_1_white_24"
+                android:tint="@color/red" />
 
         </LinearLayout>
 

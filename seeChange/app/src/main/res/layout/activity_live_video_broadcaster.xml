@@ -15,6 +15,7 @@
         android:minHeight="?attr/actionBarSize"
         android:titleTextColor="@android:color/white"></android.support.v7.widget.Toolbar>
 
+
     <!--
     <com.google.android.exoplayer.AspectRatioFrameLayout
         android:id="@+id/cameraPreview_afl"
@@ -24,10 +25,13 @@
         android:layout_centerInParent="true"
         >
         -->
+
     <android.opengl.GLSurfaceView
         android:id="@+id/cameraPreview_surfaceView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:visibility="gone" />
 
         android:layout_gravity="center"
         android:visibility="gone" />

@@ -1,4 +1,4 @@
-package io.antmedia.android.liveVideoBroadcaster;
+package thecircle.seechange.presentation;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

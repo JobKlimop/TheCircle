@@ -13,7 +13,7 @@
     tools:context=".presentation.LoginActivity"
     android:background="@drawable/bg2">
 
-    <!-- Login progress -->
+    <!-- User progress -->
 
     <ImageView
         android:id="@+id/logo"

@@ -8,13 +8,13 @@
     <string name="watching">Watching</string>
     <string name="status">Offline</string>
 
-    <!-- Login -->
+    <!-- User -->
     <string name="username">Username</string>
     <string name="password">Password</string>
     <string name="action_sign_in">Login</string>
     <string name="action_sign_in_short">Sign in</string>
-    <string name="error_invalid_username">This username is invalid</string>
-    <string name="error_invalid_password">This password is incorrect</string>
+    <string name="error_invalid_username">This username should be more than 3 characters long</string>
+    <string name="error_invalid_password">This password should be more than 3 characters long</string>
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_field_required">This field is required</string>
 
@@ -73,4 +73,26 @@
     <string name="sample_list_load_error">One or more sample lists failed to load</string>
     <string name="stream_not_started">Failed to start. Please check server url and security credentials.</string>
     <string name="title_activity_splash">SplashActivity</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <!--Chat strings-->
+    <string name="action_leave">Leave</string>
+    <string name="action_send">Send</string>
+    <string name="prompt_message">Message</string>
+
+    <string name="connect">Connected</string>
+    <string name="disconnect">Disconnected, Please check your internet connection</string>
+    <string name="error_connect">Failed to connect</string>
+
+    <!-- messages -->
+    <string name="message_welcome">Welcome to Socket.IO Chat –</string>
+    <plurals name="message_participants">
+        <item quantity="one">there\'s %d participant</item>
+        <item quantity="other">there are %d participants</item>
+    </plurals>
+    <string name="message_user_joined">%s joined</string>
+    <string name="message_user_left">%s left</string>
+    <string name="user_action_typing">is typing</string>
 </resources>

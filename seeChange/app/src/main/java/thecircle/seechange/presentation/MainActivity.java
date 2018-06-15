@@ -11,7 +11,7 @@ public class MainActivity extends AppCompatActivity {
     /**
      * PLEASE WRITE RTMP BASE URL of the your RTMP SERVER.
      */
-    public static final String RTMP_BASE_URL = "rtmp://10.2.41.95/LiveApp/";
+//    public static final String RTMP_BASE_URL = "rtmp://10.2.41.95/LiveApp/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,10 +19,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
     }
 
-    public void openVideoBroadcaster(View view) {
-        Intent i = new Intent(this, StreamActivity.class);
-        startActivity(i);
-    }
+//    public void openVideoBroadcaster(View view) {
+//        Intent i = new Intent(this, StreamActivity.class);
+//        startActivity(i);
+//    }
 
 
 }

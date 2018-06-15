@@ -5,4 +5,7 @@ android:id="@+id/container"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
 android:background="#000"
-tools:context="thecircle.seechange.presentation.activities.MainActivity" />
+tools:context="thecircle.seechange.presentation.MainActivity">
+</FrameLayout>
+
+

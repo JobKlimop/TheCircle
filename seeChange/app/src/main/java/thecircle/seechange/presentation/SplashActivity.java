@@ -20,7 +20,7 @@ public class SplashActivity extends AppCompatActivity {
         new Handler().postDelayed(new Runnable() {
             public void run() {
                 startActivity(new Intent(SplashActivity.this,
-                        LoginActivity.class));
+                        ChatActivity.class));
                 finish();
             }
         }, secondsDelayed * 2000);

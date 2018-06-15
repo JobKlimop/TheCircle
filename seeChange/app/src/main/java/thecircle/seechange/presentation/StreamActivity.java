@@ -38,9 +38,11 @@ import io.antmedia.android.broadcaster.utils.Resolution;
 import thecircle.seechange.R;
 import android.support.v7.widget.Toolbar;
 
-import static thecircle.seechange.presentation.MainActivity.RTMP_BASE_URL;
+//import static thecircle.seechange.presentation.MainActivity.RTMP_BASE_URL;
 
 public class StreamActivity extends AppCompatActivity {
+
+    private final String RTMP_BASE_URL = "";
 
 
     private ViewGroup mRootView;
@@ -86,7 +88,7 @@ public class StreamActivity extends AppCompatActivity {
         // Hide title
         //requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+//        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         //binding on resume not to having leaked service connection
         mLiveVideoBroadcasterServiceIntent = new Intent(this, LiveVideoBroadcaster.class);

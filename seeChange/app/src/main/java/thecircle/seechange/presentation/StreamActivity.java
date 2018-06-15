@@ -260,7 +260,6 @@ public class StreamActivity extends AppCompatActivity {
                                 mStreamLiveStatus.setVisibility(View.VISIBLE);
 
                                 mBroadcastControlButton.setImageResource(R.drawable.baseline_videocam_off_white_24);
-                                mSettingsButton.setVisibility(View.GONE);
                                 startTimer();//start the recording duration
                             }
                             else {
@@ -293,7 +292,6 @@ public class StreamActivity extends AppCompatActivity {
 
             mStreamLiveStatus.setVisibility(View.GONE);
             mStreamLiveStatus.setText(R.string.live_indicator);
-            mSettingsButton.setVisibility(View.VISIBLE);
 
             stopTimer();
             mLiveVideoBroadcaster.stopBroadcasting();

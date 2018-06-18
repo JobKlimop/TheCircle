@@ -1,24 +1,25 @@
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:fitsSystemWindows="true"
     android:orientation="vertical"
-    tools:context=".presentation.StreamActivity"
-    android:id="@+id/root_layout">
+    tools:context=".presentation.StreamActivity">
 
 
     <android.opengl.GLSurfaceView
         android:id="@+id/cameraPreview_surfaceView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"
-        android:layout_gravity="center" />
+        android:layout_gravity="center"
+        android:visibility="gone" />
+
     <View
+        android:id="@+id/transparent_cover"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/transparent_cover"
-        android:background="#77000000"/>
+        android:background="#77000000" />
     <!--
    </com.google.android.exoplayer.AspectRatioFrameLayout>
     -->
@@ -26,11 +27,11 @@
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
-        android:minHeight="?attr/actionBarSize"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?attr/colorPrimary"
-        android:fitsSystemWindows="true">
+        android:fitsSystemWindows="true"
+        android:minHeight="?attr/actionBarSize">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -102,19 +103,6 @@
         </LinearLayout>
 
     </android.support.v7.widget.Toolbar>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:orientation="vertical"
-        android:padding="24dp"
-        android:visibility="visible"
-        >
-        <EditText
-            android:id="@+id/stream_name_edit_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:textAppearanceMedium"
-            />
-    </LinearLayout>
-</android.support.design.widget.CoordinatorLayout>
+
+
+</RelativeLayout>

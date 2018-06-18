@@ -19,6 +19,7 @@ import android.os.Message;
 
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.ContentLoadingProgressBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -36,6 +37,8 @@ import io.antmedia.android.broadcaster.ILiveVideoBroadcaster;
 import io.antmedia.android.broadcaster.LiveVideoBroadcaster;
 import io.antmedia.android.broadcaster.utils.Resolution;
 import thecircle.seechange.R;
+import thecircle.seechange.presentation.fragment.Fragment1;
+
 import android.support.v7.widget.Toolbar;
 
 import static thecircle.seechange.presentation.MainActivity.RTMP_BASE_URL;
@@ -80,7 +83,10 @@ public class StreamActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        Fragment1 fragment = new Fragment1();
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.root_layout, fragment);
+        transaction.commit();
         // Hide title
         //requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);

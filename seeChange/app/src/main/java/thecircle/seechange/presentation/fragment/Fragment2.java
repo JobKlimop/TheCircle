@@ -14,13 +14,15 @@ public class Fragment2 extends Fragment {
 
     View view;
     Button btn;
-
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // TODO Auto-generated method stub
+        return inflater.inflate(R.layout.fragment_frag1, container, false);
 
-        view=inflater.inflate(R.layout.fragment_frag1, container, false);
-        return view;
     }
 }

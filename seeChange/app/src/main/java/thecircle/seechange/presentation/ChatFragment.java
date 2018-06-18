@@ -38,6 +38,7 @@ import java.util.List;
 
 import thecircle.seechange.Adapters.MessageAdapter;
 import thecircle.seechange.R;
+import thecircle.seechange.domain.Constants;
 import thecircle.seechange.domain.Message;
 
 
@@ -62,7 +63,7 @@ public class ChatFragment extends Fragment {
     private Socket mSocket;
     {
         try {
-            mSocket = IO.socket("http://145.49.56.217:3355/");
+            mSocket = IO.socket(Constants.CHAT_SERVER_URL);
         } catch (Exception e) {
             Log.d("Error", "" + e);
         }
@@ -93,19 +94,19 @@ public class ChatFragment extends Fragment {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
 
-//        mSocket.connect();
-//        mSocket.on(Socket.EVENT_CONNECT,onConnect);
-//        mSocket.on(Socket.EVENT_DISCONNECT,onDisconnect);
-//        mSocket.on(Socket.EVENT_CONNECT_ERROR, onConnectError);
-//        mSocket.on(Socket.EVENT_CONNECT_TIMEOUT, onConnectError);
-//        mSocket.on("new message", onNewMessage);
-//        mSocket.on("user joined", onUserJoined);
-//        mSocket.on("user left", onUserLeft);
-//        mSocket.on("typing", onTyping);
-//        mSocket.on("stop typing", onStopTyping);
-//        mSocket.connect();
+        mSocket.connect();
+        mSocket.on(Socket.EVENT_CONNECT,onConnect);
+        mSocket.on(Socket.EVENT_DISCONNECT,onDisconnect);
+        mSocket.on(Socket.EVENT_CONNECT_ERROR, onConnectError);
+        mSocket.on(Socket.EVENT_CONNECT_TIMEOUT, onConnectError);
+        mSocket.on("new message", onNewMessage);
+        mSocket.on("user joined", onUserJoined);
+        mSocket.on("user left", onUserLeft);
+        mSocket.on("typing", onTyping);
+        mSocket.on("stop typing", onStopTyping);
+        mSocket.connect();
 //
-//        startSignIn();
+        startSignIn();
     }
 
     @Override

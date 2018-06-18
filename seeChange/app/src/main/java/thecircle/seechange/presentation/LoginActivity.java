@@ -47,6 +47,7 @@ import java.util.List;
 import java.util.Map;
 
 import thecircle.seechange.R;
+import thecircle.seechange.domain.Constants;
 import thecircle.seechange.domain.User;
 
 /**
@@ -68,7 +69,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         try {
-            mSocket = IO.socket("http://145.49.56.217:3355/");
+            mSocket = IO.socket(Constants.CHAT_SERVER_URL);
         } catch (Exception e) {
             Log.d("Error", "" + e);
         }
@@ -191,11 +192,10 @@ public class LoginActivity extends AppCompatActivity {
                 return;
             }
 
-            Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
+            Intent intent = new Intent();
             intent.putExtra("username", mUsername);
             intent.putExtra("connectedUsers", connectedUsers);
             setResult(RESULT_OK, intent);
-            startActivity(intent);
             finish();
         }
     };

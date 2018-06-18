@@ -93,19 +93,19 @@ public class ChatFragment extends Fragment {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
 
-        mSocket.connect();
-        mSocket.on(Socket.EVENT_CONNECT,onConnect);
-        mSocket.on(Socket.EVENT_DISCONNECT,onDisconnect);
-        mSocket.on(Socket.EVENT_CONNECT_ERROR, onConnectError);
-        mSocket.on(Socket.EVENT_CONNECT_TIMEOUT, onConnectError);
-        mSocket.on("new message", onNewMessage);
-        mSocket.on("user joined", onUserJoined);
-        mSocket.on("user left", onUserLeft);
-        mSocket.on("typing", onTyping);
-        mSocket.on("stop typing", onStopTyping);
-        mSocket.connect();
-
-        startSignIn();
+//        mSocket.connect();
+//        mSocket.on(Socket.EVENT_CONNECT,onConnect);
+//        mSocket.on(Socket.EVENT_DISCONNECT,onDisconnect);
+//        mSocket.on(Socket.EVENT_CONNECT_ERROR, onConnectError);
+//        mSocket.on(Socket.EVENT_CONNECT_TIMEOUT, onConnectError);
+//        mSocket.on("new message", onNewMessage);
+//        mSocket.on("user joined", onUserJoined);
+//        mSocket.on("user left", onUserLeft);
+//        mSocket.on("typing", onTyping);
+//        mSocket.on("stop typing", onStopTyping);
+//        mSocket.connect();
+//
+//        startSignIn();
     }
 
     @Override

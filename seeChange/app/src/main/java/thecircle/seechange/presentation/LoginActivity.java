@@ -101,7 +101,7 @@ public class LoginActivity extends AppCompatActivity {
         mProgressView = findViewById(R.id.login_progress);
 
         mSocket.connect();
-        mSocket.on("login", onLogin);
+//        mSocket.on("login", onLogin);
     }
 
     public void LoginRequest(final String username, final String password) {
@@ -156,10 +156,11 @@ public class LoginActivity extends AppCompatActivity {
                         // login succes
                         showProgress(true);
 
+                        mSocket.on("login", onLogin);
 //                        Intent i = new Intent(getApplicationContext(), ChatActivity.class);
 //                        startActivity(i);
 
-                        finish();
+//                        finish();
 
                     }
                 }, new Response.ErrorListener() {
@@ -168,6 +169,8 @@ public class LoginActivity extends AppCompatActivity {
                 Toast.makeText(LoginActivity.this, "Username or password is incorrect", Toast.LENGTH_SHORT).show();
             }
         });
+
+//        mSocket.on("login", onLogin);
         String username2 = mUsernameView.getText().toString();
         mUsername = username2;
 
@@ -188,10 +191,11 @@ public class LoginActivity extends AppCompatActivity {
                 return;
             }
 
-            Intent intent = new Intent();
+            Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
             intent.putExtra("username", mUsername);
             intent.putExtra("connectedUsers", connectedUsers);
             setResult(RESULT_OK, intent);
+            startActivity(intent);
             finish();
         }
     };

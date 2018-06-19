@@ -20,6 +20,7 @@ import java.util.Iterator;
 
 import io.antmedia.android.broadcaster.network.IMediaMuxer;
 import io.antmedia.android.broadcaster.security.HashSigner;
+import io.antmedia.android.broadcaster.security.RequestTask;
 
 /**
  * Created by faraklit on 09.02.2016.
@@ -41,6 +42,7 @@ public class RTMPStreamer extends Handler implements IMediaMuxer  {
     private Object frameSynchronized = new Object();
     private boolean isConnected = false;
     private Context c;
+    private String signedDataToSend;
 
     public class Frame {
         public byte[] data;
@@ -257,10 +259,25 @@ public class RTMPStreamer extends Handler implements IMediaMuxer  {
                         frame.timestamp++;
                     }
                     if (isConnected) {
-                        int result = rtmpMuxer.writeVideo(frame.data, 0, frame.length, frame.timestamp);
+                        RequestTask task = new RequestTask();
 
                         HashSigner hashSigner = new HashSigner();
-                        hashSigner.sign(c, frame);
+                        try {
+                            signedDataToSend = hashSigner.sign(c, frame);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+                        int result = rtmpMuxer.writeVideo(frame.data, 0, frame.length, frame.timestamp);
+
+                        Log.i("RESULT", Integer.toString(result));
+
+                        try {
+                            task.post("http://145.49.56.105:8000/LiveApp/", c, frame, signedDataToSend);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
 
                         if (DEBUG) {
                             Log.d(TAG, "send video result: " + result + " time:" + frame.timestamp + " length:" + frame.length);

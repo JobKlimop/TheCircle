@@ -86,8 +86,8 @@ public class HashSigner {
             RSAPrivateKey privateKeyObject = (RSAPrivateKey) kf.generatePrivate(new PKCS8EncodedKeySpec(secret));
 
             // Decode the public key
-            byte[] publicKey = Base64.decode(publicKeyString,Base64.NO_PADDING);
-            RSAPublicKey publicKeyObject = (RSAPublicKey)  kf.generatePublic(new X509EncodedKeySpec(publicKey));
+//            byte[] publicKey = Base64.decode(publicKeyString,Base64.NO_PADDING);
+//            RSAPublicKey publicKeyObject = (RSAPublicKey)  kf.generatePublic(new X509EncodedKeySpec(publicKey));
 
             // Make a bytearray to sign
             byte[] dataToSign = hash.getBytes();
@@ -98,8 +98,8 @@ public class HashSigner {
             sig.update(dataToSign);
             signedData = sig.sign();
 
-            sig.initVerify(publicKeyObject);
-            Log.i("verify", Boolean.toString( sig.verify(signedData) ));
+//            sig.initVerify(publicKeyObject);
+//            Log.i("verify", Boolean.toString( sig.verify(signedData) ));
 
             Formatter formatter = new Formatter();
             for (byte b : signedData) {

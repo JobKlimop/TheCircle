@@ -154,6 +154,7 @@ public class LoginActivity extends AppCompatActivity {
                         Intent intent = new Intent(getApplicationContext(), StreamActivity.class);
                         intent.putExtra("username", mUsername);
                         startActivity(intent);
+                        finish();
 
                     }
                 }, new Response.ErrorListener() {

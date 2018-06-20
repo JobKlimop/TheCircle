@@ -55,7 +55,7 @@
                     android:inputType="textEmailAddress"
                     android:maxLines="1"
                     android:singleLine="true"
-                    android:text="test1"
+                    android:text="mika"
                     android:textColor="@android:color/background_light"
                     android:textColorLink="@android:color/darker_gray"
                     android:theme="@style/EditTextTheme" />

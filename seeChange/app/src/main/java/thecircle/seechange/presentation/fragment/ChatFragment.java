@@ -3,6 +3,7 @@ package thecircle.seechange.presentation.fragment;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.media.Image;
 import android.os.Build;
 import android.os.Bundle;
@@ -15,8 +16,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ListView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.github.nkzawa.emitter.Emitter;
@@ -51,11 +55,12 @@ import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.ArrayList;
 import java.util.Formatter;
 import java.util.List;
+import java.util.Random;
 
 import javax.net.ssl.SSLContext;
 
 
-
+import thecircle.seechange.Adapters.ChatMessageAdapter;
 import thecircle.seechange.R;
 import thecircle.seechange.domain.Constants;
 import thecircle.seechange.domain.Message;
@@ -68,27 +73,47 @@ public class ChatFragment extends Fragment {
     private List<Message> mMessages = new ArrayList<Message>();
     private RecyclerView.Adapter mAdapter;
     private RecyclerView mMessagesView;
+    private ListView messageList;
+    private ArrayList<Message> messageArray = new ArrayList<Message>();
+    ArrayAdapter<Message> adapter;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 //        connectWebSocket("http://145.49.24.24:3000");
         connectWebSocket("http://the-circle-chat.herokuapp.com");
+
+
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_chat, container, false);
 
-//        addLog(getResources().getString(R.string.message_welcome));
+
+        adapter = new ChatMessageAdapter(getContext(), messageArray);
+        messageList = (ListView) view.findViewById(R.id.messages);
+        messageList.setAdapter(adapter);
+
         final EditText message_input = (EditText) view.findViewById(R.id.message_input);
+        final TextView usernameTV = (TextView) view.findViewById(R.id.username);
+
         ImageButton sendButton = (ImageButton) view.findViewById(R.id.send_button);
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 try {
-                    sendMessage(message_input.getText().toString());
-                    message_input.setText("");
+                    if(message_input.length() >= 1) {
+
+//                        Random rnd = new Random();
+//                        usernameTV.setTextColor(Color.argb(255, rnd.nextInt(256), rnd.nextInt(256),rnd.nextInt(256)));
+
+                        sendMessage(message_input.getText().toString());
+                        message_input.setText("");
+                    }else{
+                        message_input.setText("");
+                    }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 } catch (NoSuchAlgorithmException e) {
@@ -110,62 +135,6 @@ public class ChatFragment extends Fragment {
 
     private Socket mSocket;
     private void connectWebSocket(String websocketEndPointUrl){
-//
-//        URI uri;
-//        try {
-//            Log.i("Uri try and catch", "Does it come here?");
-////            mSocket = IO.socket("https://the-circle-chat.herokuapp.com");
-////            mSocket.connect();
-////            websocketEndPointUrl="ws://the-circle-chat.herokuapp.com/";
-//            websocketEndPointUrl="ws://145.49.24.24:3000";
-//
-//            uri = new URI(websocketEndPointUrl);
-//            //uri = new URI("ws://the-circle-chat.herokuapp.com");
-//        } catch (URISyntaxException e) {
-//            e.printStackTrace();
-//            return;
-//        }
-//
-//        mWebSocketClient = new WebSocketClient(uri, new Draft_10()) {
-//            @Override
-//            public void onOpen(ServerHandshake serverHandshake) {
-//                Log.i("Websocket", "Opened");
-//                mWebSocketClient.onMessage("message");
-//                mWebSocketClient.emit("connection_info");
-//            }
-//
-//            @Override
-//            public void onMessage(String s) {
-//                final String message = s;
-//                getActivity().runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        TextView textView = (TextView) getView().findViewById(R.id.messages);
-//                        textView.setText(textView.getText() + "\n" + message);
-//                    }
-//                });
-//            }
-//
-//            @Override
-//            public void onClose(int i, String s, boolean b) {
-//                Log.i("Websocket", "Closed " + s);
-//            }
-//
-//            @Override
-//            public void onError(Exception e) {
-//                Log.i("Websocket", "Error " + e.getMessage());
-//            }
-//        };
-////        if (websocketEndPointUrl.indexOf("ws") == 0)
-////        {
-////            try {
-////                SSLContext sslContext = SSLContext.getDefault();
-////                mWebSocketClient.setWebSocketFactory(new DefaultSSLWebSocketClientFactory(sslContext));
-////            } catch (NoSuchAlgorithmException e) {
-////                e.printStackTrace();
-////            }
-////        }
-//        mWebSocketClient.connect();
         try{
             IO.Options opt = new IO.Options();
             opt.transports = new String[] {WebSocket.NAME};
@@ -196,6 +165,7 @@ public class ChatFragment extends Fragment {
                         String crt = prefs.getString("crt", null);
                         JSONObject object = new JSONObject("{ \"certificate\" : \"" + crt + "\"}");
                         mSocket.emit("verify_identity",  object);
+                        Log.i("CONNECT", "connected");
 
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -256,35 +226,40 @@ public class ChatFragment extends Fragment {
                 public void run() {
                     JSONObject data = (JSONObject) args[0];
                     Log.i("MESSAGE", data.toString());
+                    try {
+                        Message messsage = new Message(data.getString("content").toString(), data.getString("user").toString() );
+                        messageArray.add(messsage);
+                        adapter.notifyDataSetChanged();
+                        messageList.smoothScrollToPosition(adapter.getCount(), -1);
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
 
                 }
             });
         }
     };
-    private void addLog(String message) {
-        mMessages.add(new Message.Builder(Message.TYPE_LOG)
-                .message(message).build());
-        mAdapter.notifyItemInserted(mMessages.size() - 1);
-        scrollToBottom();
-    }
 
     private void scrollToBottom() {
         mMessagesView.scrollToPosition(mAdapter.getItemCount() - 1);
     }
 
     public void sendMessage(String message) throws JSONException, InvalidKeySpecException, NoSuchAlgorithmException, InvalidKeyException, SignatureException {
-        SharedPreferences prefs = getContext().getSharedPreferences("CREDENTIALS", getContext().MODE_PRIVATE);
-        String username = prefs.getString("username", null);
-        String crt = prefs.getString("crt", null);
-        long unixTime = System.currentTimeMillis() / 1000L;
+        if(message != null){
+            SharedPreferences prefs = getContext().getSharedPreferences("CREDENTIALS", getContext().MODE_PRIVATE);
+            String username = prefs.getString("username", null);
+            String crt = prefs.getString("crt", null);
+            long unixTime = System.currentTimeMillis() / 1000L;
 
-        JSONObject data = new JSONObject();
-        data.put("room", username);
-        data.put("timestamp", unixTime);
-        data.put("content", message);
-        data.put("certificate", crt);
-        data.put("signature", sign(message + unixTime));
-        mSocket.emit("message", data);
+            JSONObject data = new JSONObject();
+            data.put("room", username);
+            data.put("timestamp", unixTime);
+            data.put("content", message);
+            data.put("certificate", crt);
+            data.put("signature", sign(message + unixTime));
+            mSocket.emit("message", data);
+        }
     }
 
     public String sign(String message) throws NoSuchAlgorithmException, SignatureException, InvalidKeySpecException, InvalidKeyException {

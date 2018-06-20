@@ -126,14 +126,6 @@ public class StreamActivity extends AppCompatActivity {
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
 
-        pauseButton = (ImageButton) findViewById(R.id.pauseBroadcastButton);
-        pauseButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onPause();
-            }
-        });
-
         mTimerHandler = new TimerHandler();
         mStreamNameEditText = (EditText) findViewById(R.id.stream_name_edit_text);
 

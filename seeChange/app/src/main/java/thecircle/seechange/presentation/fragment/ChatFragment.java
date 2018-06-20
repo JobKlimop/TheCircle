@@ -2,11 +2,13 @@ package thecircle.seechange.presentation.fragment;
 
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.media.Image;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
@@ -14,11 +16,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -76,6 +81,7 @@ public class ChatFragment extends Fragment {
     private ListView messageList;
     private ArrayList<Message> messageArray = new ArrayList<Message>();
     ArrayAdapter<Message> adapter;
+    private LinearLayout linearLayout;
 
 
     @Override
@@ -96,8 +102,10 @@ public class ChatFragment extends Fragment {
         messageList = (ListView) view.findViewById(R.id.messages);
         messageList.setAdapter(adapter);
 
+        final LinearLayout linearLayout = (LinearLayout) view.findViewById(R.id.linearLayout);
         final EditText message_input = (EditText) view.findViewById(R.id.message_input);
         final TextView usernameTV = (TextView) view.findViewById(R.id.username);
+        closeKeyboard(getActivity(), message_input.getWindowToken());
 
         ImageButton sendButton = (ImageButton) view.findViewById(R.id.send_button);
         sendButton.setOnClickListener(new View.OnClickListener() {
@@ -263,7 +271,7 @@ public class ChatFragment extends Fragment {
         MessageDigest digest = null;
         SharedPreferences prefs = getContext().getSharedPreferences("CREDENTIALS", getContext().MODE_PRIVATE);
         String privateKeyString = prefs.getString("privatekey", "unavailabe");
-
+        Log.i("TAG", privateKeyString);
         privateKeyString = privateKeyString.replace("-----BEGIN RSA PRIVATE KEY-----", "");
         privateKeyString = privateKeyString.replace("-----END RSA PRIVATE KEY-----", "");
 
@@ -295,5 +303,20 @@ public class ChatFragment extends Fragment {
 
         return charactersToSend;
     }
+    public static void closeKeyboard(Context c, IBinder windowToken) {
+        InputMethodManager mgr = (InputMethodManager) c.getSystemService(Context.INPUT_METHOD_SERVICE);
+        mgr.hideSoftInputFromWindow(windowToken, 0);
+    }
 
+    @Override
+    public void onPause() {
+        mSocket.disconnect();
+        super.onPause();
+    }
+
+    @Override
+    public void onDestroy() {
+        mSocket.disconnect();
+        super.onDestroy();
+    }
 }

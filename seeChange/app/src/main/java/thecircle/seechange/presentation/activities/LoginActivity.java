@@ -140,7 +140,8 @@ public class LoginActivity extends AppCompatActivity {
                             SharedPreferences.Editor editor = getSharedPreferences("CREDENTIALS", MODE_PRIVATE).edit();
                             editor.putString("token", response.getString("token"));
                             editor.putString("privatekey", response.getJSONObject("crt").getString("private"));
-                            editor.putString("crt", response.getJSONObject("crt").getString("cert"));
+                            editor.putString("certificate", response.getJSONObject("crt").getString("cert"));
+                            editor.putString("publickey", response.getJSONObject("crt").getString("public"));
                             editor.putString("username", username);
                             editor.apply();
 
@@ -167,28 +168,7 @@ public class LoginActivity extends AppCompatActivity {
         queue.add(request);
     }
 
-    private Emitter.Listener onLogin = new Emitter.Listener() {
-        @Override
-        public void call(Object... args) {
-            JSONObject data = (JSONObject) args[0];
 
-            int connectedUsers;
-            try {
-                connectedUsers = data.getInt("connectedUsers");
-            } catch (JSONException e) {
-                return;
-            }
-
-            Log.i("LOGIN", "login evet");
-
-            Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
-            intent.putExtra("username", mUsername);
-            intent.putExtra("connectedUsers", connectedUsers);
-            startActivity(intent);
-            setResult(RESULT_OK, intent);
-            finish();
-        }
-    };
 
 
     private boolean isUsernameValid(String username) {

@@ -45,12 +45,12 @@ import io.antmedia.android.broadcaster.ILiveVideoBroadcaster;
 import io.antmedia.android.broadcaster.LiveVideoBroadcaster;
 import io.antmedia.android.broadcaster.utils.Resolution;
 import thecircle.seechange.R;
+import thecircle.seechange.logic.AccountConnectionManager;
 import thecircle.seechange.presentation.fragment.StreamFragment;
 import thecircle.seechange.presentation.fragment.ChatFragment;
 
 import android.support.v7.widget.Toolbar;
 
-import static thecircle.seechange.presentation.activities.MainActivity.RTMP_BASE_URL;
 
 public class StreamActivity extends AppCompatActivity {
     private ViewGroup mRootView;
@@ -67,7 +67,7 @@ public class StreamActivity extends AppCompatActivity {
     private ImageButton mBroadcastControlButton;
     private TabLayout tabLayout;
     private ViewPager viewPager;
-
+    public static final String RTMP_BASE_URL = "rtmp://145.49.56.105/LiveApp/";
     /** Defines callbacks for service binding, passed to bindService() */
     private ServiceConnection mConnection = new ServiceConnection() {
 
@@ -173,31 +173,11 @@ public class StreamActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
     public void changeCamera(View v) {
         if (mLiveVideoBroadcaster != null) {
             mLiveVideoBroadcaster.changeCamera();
         }
+
 
     }
 

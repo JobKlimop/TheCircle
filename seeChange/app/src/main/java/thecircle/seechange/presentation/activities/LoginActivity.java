@@ -3,10 +3,12 @@ package thecircle.seechange.presentation.activities;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
-import android.content.Context;
+import android.app.FragmentManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
+
+import android.os.AsyncTask;
 
 import android.os.Build;
 import android.os.Bundle;
@@ -16,6 +18,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
+import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -27,31 +30,45 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.github.nkzawa.emitter.Emitter;
+import com.github.nkzawa.socketio.client.IO;
+import com.github.nkzawa.socketio.client.Socket;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import thecircle.seechange.R;
+import thecircle.seechange.domain.Constants;
+import thecircle.seechange.domain.User;
 
 /**
  * A User screen that offers User via email/password.
  */
-public class LoginActivity extends AppCompatActivity{
+public class LoginActivity extends AppCompatActivity {
     // UI references.
     private AutoCompleteTextView mUsernameView;
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
+    private String mUsername;
+
+    private Socket mSocket;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+
         // Set up the User form.
         mUsernameView = (AutoCompleteTextView) findViewById(R.id.username);
 //        populateAutoComplete();
@@ -78,6 +95,7 @@ public class LoginActivity extends AppCompatActivity{
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
+
     }
 
     public void LoginRequest(final String username, final String password) {
@@ -94,12 +112,12 @@ public class LoginActivity extends AppCompatActivity{
             focusView = mUsernameView;
             focusView.requestFocus();
             return;
-        }else if (TextUtils.isEmpty(password)) {
+        } else if (TextUtils.isEmpty(password)) {
             mPasswordView.setError(getString(R.string.error_field_required));
             focusView = mPasswordView;
             focusView.requestFocus();
             return;
-        }else if (!isPasswordValid(password)) {
+        } else if (!isPasswordValid(password)) {
             mPasswordView.setError(getString(R.string.error_invalid_password));
             focusView = mPasswordView;
             focusView.requestFocus();
@@ -122,13 +140,9 @@ public class LoginActivity extends AppCompatActivity{
                             SharedPreferences.Editor editor = getSharedPreferences("CREDENTIALS", MODE_PRIVATE).edit();
                             editor.putString("token", response.getString("token"));
                             editor.putString("privatekey", response.getJSONObject("crt").getString("private"));
-                            editor.putString("certificate", response.getJSONObject("crt").getString("cert"));
-                            editor.putString("publickey", response.getJSONObject("crt").getString("public"));
+                            editor.putString("crt", response.getJSONObject("crt").getString("cert"));
+                            editor.putString("username", username);
                             editor.apply();
-
-                            SharedPreferences settings = getApplicationContext().getSharedPreferences("CREDENTIALS", Context.MODE_PRIVATE);
-                            String privateKeyString = settings.getString("privatekey", "unavailabe");
-                            Log.i("PRIVATE KEY", privateKeyString);
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -136,9 +150,10 @@ public class LoginActivity extends AppCompatActivity{
                         }
                         // login succes
                         showProgress(true);
-                        Intent i = new Intent(getApplicationContext(), StreamActivity.class);
-                        startActivity(i);
-                        finish();
+
+                        Intent intent = new Intent(getApplicationContext(), StreamActivity.class);
+                        intent.putExtra("username", mUsername);
+                        startActivity(intent);
 
                     }
                 }, new Response.ErrorListener() {
@@ -147,20 +162,44 @@ public class LoginActivity extends AppCompatActivity{
                 Toast.makeText(LoginActivity.this, "Username or password is incorrect", Toast.LENGTH_SHORT).show();
             }
         });
+
         queue.add(request);
     }
 
+    private Emitter.Listener onLogin = new Emitter.Listener() {
+        @Override
+        public void call(Object... args) {
+            JSONObject data = (JSONObject) args[0];
+
+            int connectedUsers;
+            try {
+                connectedUsers = data.getInt("connectedUsers");
+            } catch (JSONException e) {
+                return;
+            }
+
+            Log.i("LOGIN", "login evet");
+
+            Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
+            intent.putExtra("username", mUsername);
+            intent.putExtra("connectedUsers", connectedUsers);
+            startActivity(intent);
+            setResult(RESULT_OK, intent);
+            finish();
+        }
+    };
 
 
-    public boolean isUsernameValid(String username) {
+    private boolean isUsernameValid(String username) {
         //TODO: Replace this with your own logic
         return username.length() > 3;
     }
 
-    public boolean isPasswordValid(String password) {
+    private boolean isPasswordValid(String password) {
         //TODO: Replace this with your own logic
         return password.length() > 3;
     }
+
 
     /**
      * Shows the progress UI and hides the User form.
@@ -199,4 +238,3 @@ public class LoginActivity extends AppCompatActivity{
     }
 
 }
-

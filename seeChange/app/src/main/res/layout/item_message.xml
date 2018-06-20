@@ -22,6 +22,7 @@
         android:paddingLeft="@dimen/spacing"
         android:paddingRight="@dimen/spacing"
         android:singleLine="true"
-        android:textColor="?android:textColorPrimary" />
+        android:textColor="?android:textColorPrimary"
+        android:inputType="textMultiLine"/>
 
 </LinearLayout>

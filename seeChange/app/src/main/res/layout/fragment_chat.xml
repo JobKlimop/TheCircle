@@ -48,12 +48,13 @@
             android:imeActionId="@+id/send"
             android:imeActionLabel="@string/action_send"
             android:imeOptions="actionSend"
-            android:inputType="text"
+            android:inputType="textMultiLine"
             android:maxLines="1"
             android:singleLine="true"
             android:textColor="@android:color/background_light"
             android:textColorLink="@android:color/background_light"
             android:theme="@style/EditTextTheme"
+
  />
 
 

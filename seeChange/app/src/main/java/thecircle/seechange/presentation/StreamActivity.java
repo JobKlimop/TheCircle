@@ -11,6 +11,7 @@ import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.hardware.Camera;
+import android.media.Image;
 import android.net.Uri;
 import android.opengl.GLSurfaceView;
 import android.os.AsyncTask;
@@ -61,7 +62,7 @@ public class StreamActivity extends AppCompatActivity {
     private Timer mTimer;
     private long mElapsedTime;
     public TimerHandler mTimerHandler;
-    private ImageButton mSettingsButton;
+    private ImageButton pauseButton;
 //    private CameraResolutionsFragment mCameraResolutionsDialog;
     private Intent mLiveVideoBroadcasterServiceIntent;
     private TextView mStreamLiveStatus;
@@ -70,6 +71,7 @@ public class StreamActivity extends AppCompatActivity {
     private ImageButton mBroadcastControlButton;
     private TabLayout tabLayout;
     private ViewPager viewPager;
+    private boolean isStreaming;
 
     /** Defines callbacks for service binding, passed to bindService() */
     private ServiceConnection mConnection = new ServiceConnection() {
@@ -124,6 +126,14 @@ public class StreamActivity extends AppCompatActivity {
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
 
+        pauseButton = (ImageButton) findViewById(R.id.pauseBroadcastButton);
+        pauseButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onPause();
+            }
+        });
+
         mTimerHandler = new TimerHandler();
         mStreamNameEditText = (EditText) findViewById(R.id.stream_name_edit_text);
 
@@ -132,6 +142,8 @@ public class StreamActivity extends AppCompatActivity {
         mStreamLiveStatus = (TextView) findViewById(R.id.stream_live_status);
 
         mBroadcastControlButton = (ImageButton) findViewById(R.id.toggle_broadcasting);
+
+
 
         // Configure the GLSurfaceView.  This will start the Renderer thread, with an
         // appropriate EGL activity.
@@ -258,15 +270,11 @@ public class StreamActivity extends AppCompatActivity {
         }
     }
 
-//    @Override
-//    protected void onPause() {
-//        super.onPause();
-//        //hide dialog if visible not to create leaked window exception
-//        if (mCameraResolutionsDialog != null && mCameraResolutionsDialog.isVisible()) {
-//            mCameraResolutionsDialog.dismiss();
-//        }
-//        mLiveVideoBroadcaster.pause();
-//    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mLiveVideoBroadcaster.pause();
+    }
 
 
     @Override
@@ -284,30 +292,6 @@ public class StreamActivity extends AppCompatActivity {
         }
 
     }
-
-//    public void showSetResolutionDialog(View v) {
-//
-//        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-//        Fragment fragmentDialog = getSupportFragmentManager().findFragmentByTag("dialog");
-//        if (fragmentDialog != null) {
-//
-//            ft.remove(fragmentDialog);
-//        }
-//
-//        ArrayList<Resolution> sizeList = mLiveVideoBroadcaster.getPreviewSizeList();
-//
-//
-//        if (sizeList != null && sizeList.size() > 0) {
-//            mCameraResolutionsDialog = new CameraResolutionsFragment();
-//
-//            mCameraResolutionsDialog.setCameraResolutions(sizeList, mLiveVideoBroadcaster.getPreviewSize());
-//            mCameraResolutionsDialog.show(ft, "resolutiton_dialog");
-//        }
-//        else {
-//            Snackbar.make(mRootView, "No resolution available",Snackbar.LENGTH_LONG).show();
-//        }
-//
-//    }
 
     public void toggleBroadcasting(View v) {
         if (!mIsRecording)

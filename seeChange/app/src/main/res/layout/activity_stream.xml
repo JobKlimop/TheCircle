@@ -93,7 +93,7 @@
                         android:tint="@android:color/holo_green_light" />
 
                     <ImageButton
-                        android:id="@+id/iPause"
+                        android:id="@+id/pauseBroadcastButton"
                         style="?attr/borderlessButtonStyle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

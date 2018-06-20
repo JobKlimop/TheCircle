@@ -3,28 +3,109 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.design.widget.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/Theme.AppCompat.NoActionBar">
+    <!--<android.support.design.widget.AppBarLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:theme="@style/Theme.AppCompat.NoActionBar">-->
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
+        <!--<android.support.v7.widget.Toolbar-->
+            <!--android:id="@+id/toolbar1"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="?attr/actionBarSize"-->
+            <!--android:background="?attr/colorPrimary"-->
 
-            app:popupTheme="@style/Theme.AppCompat.NoActionBar">
+            <!--app:popupTheme="@style/Theme.AppCompat.NoActionBar">-->
 
 
-            <android.support.design.widget.TabLayout
-                android:id="@+id/tabs"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:tabGravity="fill"
-                app:tabMode="fixed" />
-        </android.support.v7.widget.Toolbar>
-    </android.support.design.widget.AppBarLayout>
+            <!--<android.support.design.widget.TabLayout-->
+        <!--android:id="@+id/tabs"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--app:tabGravity="fill"-->
+        <!--app:tabMode="fixed" />-->
+    <!--</android.support.v7.widget.Toolbar>-->
+
+        <!--<android.support.v7.widget.Toolbar-->
+            <!--android:id="@+id/toolbar"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:background="?attr/colorPrimary"-->
+            <!--android:fitsSystemWindows="true"-->
+            <!--android:minHeight="?attr/actionBarSize">-->
+
+            <!--<LinearLayout-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_alignParentStart="true"-->
+                <!--android:layout_alignParentTop="true"-->
+                <!--android:orientation="horizontal"-->
+                <!--android:padding="4dp"-->
+                <!--android:visibility="visible">-->
+                <!--&lt;!&ndash;<ImageButton&ndash;&gt;-->
+                <!--&lt;!&ndash;android:id="@+id/settings_button"&ndash;&gt;-->
+                <!--&lt;!&ndash;android:layout_width="wrap_content"&ndash;&gt;-->
+                <!--&lt;!&ndash;android:layout_height="wrap_content"&ndash;&gt;-->
+                <!--&lt;!&ndash;android:adjustViewBounds="true"&ndash;&gt;-->
+                <!--&lt;!&ndash;android:onClick="showSetResolutionDialog"&ndash;&gt;-->
+                <!--&lt;!&ndash;android:src="@drawable/ic_settings_white_24dp"&ndash;&gt;-->
+                <!--&lt;!&ndash;style="?borderlessButtonStyle"&ndash;&gt;-->
+                <!--&lt;!&ndash;/>&ndash;&gt;-->
+
+
+                <!--<TextView-->
+                    <!--android:id="@+id/stream_live_status"-->
+                    <!--android:layout_width="60dp"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_gravity="top|end"-->
+                    <!--android:layout_marginBottom="8dp"-->
+                    <!--android:layout_marginRight="30dp"-->
+                    <!--android:layout_marginTop="8dp"-->
+                    <!--android:background="@drawable/rounded_live"-->
+                    <!--android:gravity="center"-->
+                    <!--android:padding="5dp"-->
+                    <!--android:text="@string/live_indicator" />-->
+
+                <!--<android.support.v4.widget.Space-->
+                    <!--android:layout_width="100dp"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_weight="1" />-->
+
+                <!--<ImageButton-->
+                    <!--android:id="@+id/changeCameraButton"-->
+                    <!--style="?attr/borderlessButtonStyle"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:adjustViewBounds="true"-->
+                    <!--android:onClick="changeCamera"-->
+                    <!--android:src="@drawable/ic_switch_camera_white_24dp"-->
+                    <!--android:tint="@android:color/holo_green_light" />-->
+
+                <!--<ImageButton-->
+                    <!--android:id="@+id/iPause"-->
+                    <!--style="?attr/borderlessButtonStyle"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:adjustViewBounds="true"-->
+                    <!--android:onClick="changeCamera"-->
+                    <!--android:src="@drawable/baseline_pause_circle_filled_white_24"-->
+                    <!--android:tint="@android:color/holo_orange_light" />-->
+
+                <!--<ImageButton-->
+                    <!--android:id="@+id/toggle_broadcasting"-->
+                    <!--style="?attr/borderlessButtonStyle"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:adjustViewBounds="true"-->
+                    <!--android:onClick="toggleBroadcasting"-->
+                    <!--android:src="@drawable/baseline_brightness_1_white_24"-->
+                    <!--android:tint="@color/red" />-->
+
+            <!--</LinearLayout>-->
+
+        <!--</android.support.v7.widget.Toolbar>-->
+
+
+    <!--</android.support.design.widget.AppBarLayout>-->
 
     <android.support.v4.view.ViewPager
         android:id="@+id/viewpager"

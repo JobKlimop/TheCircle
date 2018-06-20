@@ -10,7 +10,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".presentation.LoginActivity"
+    tools:context=".presentation.activities.LoginActivity"
     android:background="@drawable/bg2">
 
     <!-- User progress -->
@@ -55,6 +55,7 @@
                     android:inputType="textEmailAddress"
                     android:maxLines="1"
                     android:singleLine="true"
+                    android:text="mika"
                     android:textColor="@android:color/background_light"
                     android:textColorLink="@android:color/darker_gray"
                     android:theme="@style/EditTextTheme" />
@@ -77,6 +78,7 @@
                     android:inputType="textPassword"
                     android:maxLines="1"
                     android:singleLine="true"
+                    android:text="test"
                     android:textColor="@android:color/background_light"
                     android:textColorLink="@android:color/darker_gray"
                     android:theme="@style/EditTextTheme" />

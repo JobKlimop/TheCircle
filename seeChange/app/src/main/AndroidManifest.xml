@@ -20,7 +20,7 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.NoActionBar">
-        <activity android:name=".presentation.activities.StreamActivity">
+        <activity android:name=".presentation.activities.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -32,7 +32,7 @@
         <service android:name="io.antmedia.android.broadcaster.LiveVideoBroadcaster" />
 
         <activity android:name=".presentation.activities.ChatActivity" />
-        <!--<activity android:name=".presentation.StreamActivity" />-->
+        <activity android:name=".presentation.activities.StreamActivity" />
 
     </application>
 

@@ -60,7 +60,6 @@ public class StreamActivity extends AppCompatActivity {
     private long mElapsedTime;
     public TimerHandler mTimerHandler;
     private ImageButton mSettingsButton;
-//    private CameraResolutionsFragment mCameraResolutionsDialog;
     private Intent mLiveVideoBroadcasterServiceIntent;
     private TextView mStreamLiveStatus;
     private GLSurfaceView mGLView;
@@ -256,15 +255,11 @@ public class StreamActivity extends AppCompatActivity {
         }
     }
 
-//    @Override
-//    protected void onPause() {
-//        super.onPause();
-//        //hide dialog if visible not to create leaked window exception
-//        if (mCameraResolutionsDialog != null && mCameraResolutionsDialog.isVisible()) {
-//            mCameraResolutionsDialog.dismiss();
-//        }
-//        mLiveVideoBroadcaster.pause();
-//    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mLiveVideoBroadcaster.pause();
+    }
 
 
     @Override

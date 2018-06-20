@@ -17,8 +17,8 @@ public class HashGenerator {
 
         digest.reset();
         byte[] datahashed = digest.digest(dataToHash.getBytes());
-        return bin2hex(datahashed);
 
+        return bin2hex(datahashed);
 
     }
 

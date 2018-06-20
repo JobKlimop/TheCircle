@@ -1,5 +1,7 @@
 package io.antmedia.android.broadcaster.network;
 
+import android.content.Context;
+
 /**
  * Created by faraklit on 03.03.2016.
  */
@@ -23,7 +25,7 @@ public interface IMediaMuxer {
     int getLastVideoFrameTimeStamp();
 
 
-    boolean open(String uri);
+    boolean open(String uri, Context c);
 
     boolean isConnected();
 

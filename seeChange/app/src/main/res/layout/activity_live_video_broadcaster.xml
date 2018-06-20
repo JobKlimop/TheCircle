@@ -1,19 +1,20 @@
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_layout1"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:fitsSystemWindows="true"
     android:orientation="vertical"
-    tools:context=".presentation.StreamActivity"
-    android:id="@+id/root_layout">
+    tools:context=".presentation.activities.StreamActivity">
+
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
-        android:minHeight="?attr/actionBarSize"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:titleTextColor="@android:color/white"
-        android:background="?attr/colorPrimary">
-    </android.support.v7.widget.Toolbar>
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        android:titleTextColor="@android:color/white"></android.support.v7.widget.Toolbar>
+
 
     <!--
     <com.google.android.exoplayer.AspectRatioFrameLayout
@@ -24,18 +25,22 @@
         android:layout_centerInParent="true"
         >
         -->
+
     <android.opengl.GLSurfaceView
         android:id="@+id/cameraPreview_surfaceView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:visibility="gone" />
 
-        android:visibility="gone"
-        android:layout_gravity="center" />
+        android:layout_gravity="center"
+        android:visibility="gone" />
+
     <View
+        android:id="@+id/transparent_cover"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/transparent_cover"
-        android:background="#77000000"/>
+        android:background="#77000000" />
     <!--
    </com.google.android.exoplayer.AspectRatioFrameLayout>
     -->
@@ -44,20 +49,20 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:padding="4dp"
         android:orientation="horizontal"
-        android:visibility="visible"
-        android:layout_alignParentStart="true">
+        android:padding="4dp"
+        android:visibility="visible">
         <!--<ImageButton-->
-            <!--android:id="@+id/settings_button"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:adjustViewBounds="true"-->
-            <!--android:onClick="showSetResolutionDialog"-->
-            <!--android:src="@drawable/ic_settings_white_24dp"-->
-            <!--style="?borderlessButtonStyle"-->
-            <!--/>-->
+        <!--android:id="@+id/settings_button"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:adjustViewBounds="true"-->
+        <!--android:onClick="showSetResolutionDialog"-->
+        <!--android:src="@drawable/ic_settings_white_24dp"-->
+        <!--style="?borderlessButtonStyle"-->
+        <!--/>-->
 
         <ImageButton
             android:id="@+id/changeCameraButton"
@@ -80,7 +85,7 @@
         <android.support.v4.widget.Space
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"/>
+            android:layout_weight="1" />
 
         <TextView
             android:id="@+id/stream_live_status"
@@ -102,14 +107,13 @@
         android:layout_gravity="bottom"
         android:orientation="vertical"
         android:padding="24dp"
-        android:visibility="visible"
-        >
+        android:visibility="visible">
+
         <EditText
             android:id="@+id/stream_name_edit_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/stream_name"
-            android:textAppearance="?android:textAppearanceMedium"
-            />
+            android:textAppearance="?android:textAppearanceMedium" />
     </LinearLayout>
 </android.support.design.widget.CoordinatorLayout>

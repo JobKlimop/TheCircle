@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
     /**
      * The {@link ViewPager} that will host the section contents.
      */
-    private ViewPager mViewPager;
+    public static final String RTMP_BASE_URL = "rtmp://145.49.56.105/LiveApp/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

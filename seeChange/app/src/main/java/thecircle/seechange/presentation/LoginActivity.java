@@ -3,6 +3,7 @@ package thecircle.seechange.presentation;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
@@ -128,8 +129,13 @@ public class LoginActivity extends AppCompatActivity{
                             SharedPreferences.Editor editor = getSharedPreferences("CREDENTIALS", MODE_PRIVATE).edit();
                             editor.putString("token", response.getString("token"));
                             editor.putString("privatekey", response.getJSONObject("crt").getString("private"));
-                            editor.putString("privatekey", response.getJSONObject("crt").getString("cert"));
+                            editor.putString("certificate", response.getJSONObject("crt").getString("cert"));
+                            editor.putString("publickey", response.getJSONObject("crt").getString("public"));
                             editor.apply();
+
+                            SharedPreferences settings = getApplicationContext().getSharedPreferences("CREDENTIALS", Context.MODE_PRIVATE);
+                            String privateKeyString = settings.getString("privatekey", "unavailabe");
+                            Log.i("PRIVATE KEY", privateKeyString);
 
                         } catch (JSONException e) {
                             e.printStackTrace();

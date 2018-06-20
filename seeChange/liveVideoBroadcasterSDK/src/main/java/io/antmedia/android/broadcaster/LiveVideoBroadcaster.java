@@ -216,7 +216,7 @@ public class LiveVideoBroadcaster extends Service implements ILiveVideoBroadcast
         try {
             //   rtmpURL = "rtmp://a.rtmp.youtube.com/live2/";
             //   streamURL = "raqk-ppy4-0p33-7phc";
-            boolean result = mRtmpStreamer.open(rtmpUrl);
+            boolean result = mRtmpStreamer.open(rtmpUrl, getApplicationContext());
             if (result) {
                 final long recordStartTime = System.currentTimeMillis();
                 mGLView.queueEvent(new Runnable() {

@@ -105,12 +105,9 @@ public class ChatFragment extends Fragment {
             public void onClick(View v) {
                 try {
                     if(message_input.length() >= 1) {
-
-//                        Random rnd = new Random();
-//                        usernameTV.setTextColor(Color.argb(255, rnd.nextInt(256), rnd.nextInt(256),rnd.nextInt(256)));
-
                         sendMessage(message_input.getText().toString());
                         message_input.setText("");
+                        message_input.setLinkTextColor(Color.DKGRAY);
                     }else{
                         message_input.setText("");
                     }

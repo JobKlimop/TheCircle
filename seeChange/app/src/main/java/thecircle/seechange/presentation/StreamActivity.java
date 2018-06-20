@@ -4,9 +4,11 @@ import android.Manifest;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.hardware.Camera;
 import android.net.Uri;
@@ -312,7 +314,8 @@ public class StreamActivity extends AppCompatActivity {
         {
             if (mLiveVideoBroadcaster != null) {
                 if (!mLiveVideoBroadcaster.isConnected()) {
-                    String streamName = mStreamNameEditText.getText().toString();
+                    SharedPreferences prefs = getApplicationContext().getSharedPreferences("CREDENTIALS", Context.MODE_PRIVATE);
+                    String streamName = prefs.getString("username", "username-unavailable");
 
                     new AsyncTask<String, String, Boolean>() {
                         ContentLoadingProgressBar

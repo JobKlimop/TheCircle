@@ -131,6 +131,7 @@ public class LoginActivity extends AppCompatActivity{
                             editor.putString("privatekey", response.getJSONObject("crt").getString("private"));
                             editor.putString("certificate", response.getJSONObject("crt").getString("cert"));
                             editor.putString("publickey", response.getJSONObject("crt").getString("public"));
+                            editor.putString("username", username);
                             editor.apply();
 
                             SharedPreferences settings = getApplicationContext().getSharedPreferences("CREDENTIALS", Context.MODE_PRIVATE);

@@ -1,14 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#b4b4b4</color>
-    <color name = "darkgrey">#b4b4b4</color>
-    <color name = "red">#cc0000</color>
-    <color name = "white">#ffffff</color>
-    <color name="colorTransBg">#26000000</color>
-    <color name="burgundy">#A30005</color>
-    <color name="lightgrey">#b4b4b4</color>
 
     <color name="username0">#e21400</color>
     <color name="username1">#91580f</color>
@@ -22,5 +13,5 @@
     <color name="username9">#3824aa</color>
     <color name="username10">#a700ff</color>
     <color name="username11">#d300e7</color>
-    <color name="pink">#ff69b4</color>
+
 </resources>

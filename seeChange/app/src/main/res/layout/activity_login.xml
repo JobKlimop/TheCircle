@@ -55,6 +55,7 @@
                     android:inputType="textEmailAddress"
                     android:maxLines="1"
                     android:singleLine="true"
+                    android:text="test1"
                     android:textColor="@android:color/background_light"
                     android:textColorLink="@android:color/darker_gray"
                     android:theme="@style/EditTextTheme" />
@@ -77,6 +78,7 @@
                     android:inputType="textPassword"
                     android:maxLines="1"
                     android:singleLine="true"
+                    android:text="test"
                     android:textColor="@android:color/background_light"
                     android:textColorLink="@android:color/darker_gray"
                     android:theme="@style/EditTextTheme" />

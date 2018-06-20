@@ -65,7 +65,7 @@
 
                     <TextView
                         android:id="@+id/stream_live_status"
-                        android:layout_width="60dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="top|end"
                         android:layout_marginBottom="8dp"
@@ -74,7 +74,8 @@
                         android:background="@drawable/rounded_live"
                         android:gravity="center"
                         android:padding="5dp"
-                        android:text="@string/live_indicator" />
+                        android:text="@string/live_indicator"
+                        android:visibility="gone" />
 
                     <android.support.v4.widget.Space
                         android:layout_width="100dp"
@@ -108,7 +109,7 @@
                         android:layout_height="wrap_content"
                         android:adjustViewBounds="true"
                         android:onClick="toggleBroadcasting"
-                        android:src="@drawable/baseline_brightness_1_white_24"
+                        android:src="@drawable/baseline_videocam_white_24"
                         android:tint="@color/red" />
 
                 </LinearLayout>

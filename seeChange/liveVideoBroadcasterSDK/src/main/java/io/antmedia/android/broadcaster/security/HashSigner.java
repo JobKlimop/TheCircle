@@ -65,16 +65,10 @@ public class HashSigner {
         String publicKeyString = settings.getString("publickey", "unavailable");
         // Declare the byte array in which to store the data that will be signed
         byte[] signedData;
-        String signedDataToSend;
 
         // Replace the beginning and end to make it compatible
         privateKeyString = privateKeyString.replace("-----BEGIN RSA PRIVATE KEY-----", "");
         privateKeyString = privateKeyString.replace("-----END RSA PRIVATE KEY-----", "");
-
-        publicKeyString = publicKeyString.replace("-----BEGIN RSA PUBLIC KEY-----", "");
-        publicKeyString = publicKeyString.replace("-----END RSA PUBLIC KEY-----", "");
-
-
 
         try {
 
@@ -85,10 +79,6 @@ public class HashSigner {
             byte[] secret = Base64.decode(privateKeyString, Base64.NO_PADDING);
             RSAPrivateKey privateKeyObject = (RSAPrivateKey) kf.generatePrivate(new PKCS8EncodedKeySpec(secret));
 
-            // Decode the public key
-//            byte[] publicKey = Base64.decode(publicKeyString,Base64.NO_PADDING);
-//            RSAPublicKey publicKeyObject = (RSAPublicKey)  kf.generatePublic(new X509EncodedKeySpec(publicKey));
-
             // Make a bytearray to sign
             byte[] dataToSign = hash.getBytes();
 
@@ -97,9 +87,6 @@ public class HashSigner {
             sig.initSign(privateKeyObject);
             sig.update(dataToSign);
             signedData = sig.sign();
-
-//            sig.initVerify(publicKeyObject);
-//            Log.i("verify", Boolean.toString( sig.verify(signedData) ));
 
             Formatter formatter = new Formatter();
             for (byte b : signedData) {

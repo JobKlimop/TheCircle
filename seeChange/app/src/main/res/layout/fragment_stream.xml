@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     android:fitsSystemWindows="true"
     android:orientation="vertical"
-    tools:context=".presentation.StreamActivity">
+    tools:context=".presentation.activities.StreamActivity">
 
 
 

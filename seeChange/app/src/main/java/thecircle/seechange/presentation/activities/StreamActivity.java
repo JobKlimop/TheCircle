@@ -1,4 +1,4 @@
-package thecircle.seechange.presentation;
+package thecircle.seechange.presentation.activities;
 
 import android.Manifest;
 import android.app.AlertDialog;
@@ -45,12 +45,12 @@ import io.antmedia.android.broadcaster.ILiveVideoBroadcaster;
 import io.antmedia.android.broadcaster.LiveVideoBroadcaster;
 import io.antmedia.android.broadcaster.utils.Resolution;
 import thecircle.seechange.R;
-import thecircle.seechange.presentation.fragment.Fragment1;
-import thecircle.seechange.presentation.fragment.Fragment2;
+import thecircle.seechange.presentation.fragment.StreamFragment;
+import thecircle.seechange.presentation.fragment.ChatFragment;
 
 import android.support.v7.widget.Toolbar;
 
-import static thecircle.seechange.presentation.MainActivity.RTMP_BASE_URL;
+import static thecircle.seechange.presentation.activities.MainActivity.RTMP_BASE_URL;
 
 public class StreamActivity extends AppCompatActivity {
     private ViewGroup mRootView;
@@ -94,7 +94,7 @@ public class StreamActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Fragment1 fragment = new Fragment1();
+        StreamFragment fragment = new StreamFragment();
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.root_layout, fragment);
         transaction.commit();
@@ -140,8 +140,8 @@ public class StreamActivity extends AppCompatActivity {
     }
     private void setupViewPager(ViewPager viewPager) {
         StreamActivity.ViewPagerAdapter adapter = new StreamActivity.ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(new Fragment1(), "Stream");
-        adapter.addFragment(new Fragment2(), "Chat");
+        adapter.addFragment(new StreamFragment(), "Stream");
+        adapter.addFragment(new ChatFragment(), "Chat");
         viewPager.setAdapter(adapter);
     }
 

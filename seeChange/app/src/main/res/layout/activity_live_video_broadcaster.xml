@@ -1,11 +1,11 @@
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/root_layout"
+    android:id="@+id/root_layout1"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:fitsSystemWindows="true"
     android:orientation="vertical"
-    tools:context=".presentation.StreamActivity">
+    tools:context=".presentation.activities.StreamActivity">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"

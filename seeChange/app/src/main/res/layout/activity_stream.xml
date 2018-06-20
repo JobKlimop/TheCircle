@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     android:fitsSystemWindows="true"
     android:orientation="vertical"
-    tools:context=".presentation.StreamActivity">
+    tools:context=".presentation.activities.StreamActivity">
 
 
     <android.opengl.GLSurfaceView
@@ -35,9 +35,25 @@
             android:layout_height="wrap_content"
             android:theme="@style/Theme.AppCompat.NoActionBar">
 
+            <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+
+            app:popupTheme="@style/Theme.AppCompat.NoActionBar">
+
+
+            <android.support.design.widget.TabLayout
+            android:id="@+id/tabs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:tabGravity="fill"
+            app:tabMode="fixed" />
+            </android.support.v7.widget.Toolbar>
 
             <android.support.v7.widget.Toolbar
-                android:id="@+id/toolbar"
+                android:id="@+id/toolbar1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="?attr/colorPrimary"
@@ -116,12 +132,7 @@
             </android.support.v7.widget.Toolbar>
 
 
-            <android.support.design.widget.TabLayout
-                android:id="@+id/tabs"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:tabGravity="fill"
-                app:tabMode="fixed" />
+
 
         </android.support.design.widget.AppBarLayout>
 

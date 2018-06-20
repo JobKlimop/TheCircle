@@ -27,10 +27,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".presentation.StreamActivity" />
         <activity android:name=".presentation.LoginActivity" />
 
         <service android:name="io.antmedia.android.broadcaster.LiveVideoBroadcaster" />
+
+        <activity android:name=".presentation.ChatActivity" />
+        <activity android:name=".presentation.StreamActivity" />
+
     </application>
 
 </manifest>

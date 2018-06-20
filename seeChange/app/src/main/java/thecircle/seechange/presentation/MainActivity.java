@@ -11,7 +11,7 @@ public class MainActivity extends AppCompatActivity {
     /**
      * PLEASE WRITE RTMP BASE URL of the your RTMP SERVER.
      */
-    public static final String RTMP_BASE_URL = "rtmp://10.2.41.95/LiveApp/";
+    public static final String RTMP_BASE_URL = "rtmp://145.49.56.105/LiveApp/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

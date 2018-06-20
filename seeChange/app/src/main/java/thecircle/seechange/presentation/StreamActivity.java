@@ -4,11 +4,14 @@ import android.Manifest;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.hardware.Camera;
+import android.media.Image;
 import android.net.Uri;
 import android.opengl.GLSurfaceView;
 import android.os.AsyncTask;
@@ -18,10 +21,17 @@ import android.os.IBinder;
 import android.os.Message;
 
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.ContentLoadingProgressBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -29,6 +39,8 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -36,26 +48,30 @@ import io.antmedia.android.broadcaster.ILiveVideoBroadcaster;
 import io.antmedia.android.broadcaster.LiveVideoBroadcaster;
 import io.antmedia.android.broadcaster.utils.Resolution;
 import thecircle.seechange.R;
+import thecircle.seechange.presentation.fragment.Fragment1;
+import thecircle.seechange.presentation.fragment.Fragment2;
+
 import android.support.v7.widget.Toolbar;
 
 import static thecircle.seechange.presentation.MainActivity.RTMP_BASE_URL;
 
 public class StreamActivity extends AppCompatActivity {
-
-
     private ViewGroup mRootView;
     boolean mIsRecording = false;
     private EditText mStreamNameEditText;
     private Timer mTimer;
     private long mElapsedTime;
     public TimerHandler mTimerHandler;
-    private ImageButton mSettingsButton;
+    private ImageButton pauseButton;
 //    private CameraResolutionsFragment mCameraResolutionsDialog;
     private Intent mLiveVideoBroadcasterServiceIntent;
     private TextView mStreamLiveStatus;
     private GLSurfaceView mGLView;
     private ILiveVideoBroadcaster mLiveVideoBroadcaster;
     private ImageButton mBroadcastControlButton;
+    private TabLayout tabLayout;
+    private ViewPager viewPager;
+    private boolean isStreaming;
 
     /** Defines callbacks for service binding, passed to bindService() */
     private ServiceConnection mConnection = new ServiceConnection() {
@@ -82,11 +98,14 @@ public class StreamActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        Fragment1 fragment = new Fragment1();
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.root_layout, fragment);
+        transaction.commit();
         // Hide title
         //requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+//        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         //binding on resume not to having leaked service connection
         mLiveVideoBroadcasterServiceIntent = new Intent(this, LiveVideoBroadcaster.class);
@@ -101,6 +120,12 @@ public class StreamActivity extends AppCompatActivity {
         // Make sure the toolbar exists in the activity and is not null
         setSupportActionBar(toolbar);
 
+        viewPager = (ViewPager) findViewById(R.id.viewpager);
+        setupViewPager(viewPager);
+
+        tabLayout = (TabLayout) findViewById(R.id.tabs);
+        tabLayout.setupWithViewPager(viewPager);
+
         mTimerHandler = new TimerHandler();
         mStreamNameEditText = (EditText) findViewById(R.id.stream_name_edit_text);
 
@@ -110,6 +135,8 @@ public class StreamActivity extends AppCompatActivity {
 
         mBroadcastControlButton = (ImageButton) findViewById(R.id.toggle_broadcasting);
 
+
+
         // Configure the GLSurfaceView.  This will start the Renderer thread, with an
         // appropriate EGL activity.
         mGLView = (GLSurfaceView) findViewById(R.id.cameraPreview_surfaceView);
@@ -117,7 +144,63 @@ public class StreamActivity extends AppCompatActivity {
             mGLView.setEGLContextClientVersion(2);     // select GLES 2.0
         }
     }
+    private void setupViewPager(ViewPager viewPager) {
+        StreamActivity.ViewPagerAdapter adapter = new StreamActivity.ViewPagerAdapter(getSupportFragmentManager());
+        adapter.addFragment(new Fragment1(), "Stream");
+        adapter.addFragment(new Fragment2(), "Chat");
+        viewPager.setAdapter(adapter);
+    }
 
+    class ViewPagerAdapter extends FragmentPagerAdapter {
+        private final List<Fragment> mFragmentList = new ArrayList<>();
+        private final List<String> mFragmentTitleList = new ArrayList<>();
+
+        public ViewPagerAdapter(FragmentManager manager) {
+            super(manager);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            return mFragmentList.get(position);
+        }
+
+        @Override
+        public int getCount() {
+            return mFragmentList.size();
+        }
+
+        public void addFragment(Fragment fragment, String title) {
+            mFragmentList.add(fragment);
+            mFragmentTitleList.add(title);
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return mFragmentTitleList.get(position);
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
     public void changeCamera(View v) {
         if (mLiveVideoBroadcaster != null) {
             mLiveVideoBroadcaster.changeCamera();
@@ -179,15 +262,11 @@ public class StreamActivity extends AppCompatActivity {
         }
     }
 
-//    @Override
-//    protected void onPause() {
-//        super.onPause();
-//        //hide dialog if visible not to create leaked window exception
-//        if (mCameraResolutionsDialog != null && mCameraResolutionsDialog.isVisible()) {
-//            mCameraResolutionsDialog.dismiss();
-//        }
-//        mLiveVideoBroadcaster.pause();
-//    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mLiveVideoBroadcaster.pause();
+    }
 
 
     @Override
@@ -206,36 +285,13 @@ public class StreamActivity extends AppCompatActivity {
 
     }
 
-//    public void showSetResolutionDialog(View v) {
-//
-//        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-//        Fragment fragmentDialog = getSupportFragmentManager().findFragmentByTag("dialog");
-//        if (fragmentDialog != null) {
-//
-//            ft.remove(fragmentDialog);
-//        }
-//
-//        ArrayList<Resolution> sizeList = mLiveVideoBroadcaster.getPreviewSizeList();
-//
-//
-//        if (sizeList != null && sizeList.size() > 0) {
-//            mCameraResolutionsDialog = new CameraResolutionsFragment();
-//
-//            mCameraResolutionsDialog.setCameraResolutions(sizeList, mLiveVideoBroadcaster.getPreviewSize());
-//            mCameraResolutionsDialog.show(ft, "resolutiton_dialog");
-//        }
-//        else {
-//            Snackbar.make(mRootView, "No resolution available",Snackbar.LENGTH_LONG).show();
-//        }
-//
-//    }
-
     public void toggleBroadcasting(View v) {
         if (!mIsRecording)
         {
             if (mLiveVideoBroadcaster != null) {
                 if (!mLiveVideoBroadcaster.isConnected()) {
-                    String streamName = mStreamNameEditText.getText().toString();
+                    SharedPreferences prefs = getApplicationContext().getSharedPreferences("CREDENTIALS", Context.MODE_PRIVATE);
+                    String streamName = prefs.getString("username", "username-unavailable");
 
                     new AsyncTask<String, String, Boolean>() {
                         ContentLoadingProgressBar
@@ -260,7 +316,6 @@ public class StreamActivity extends AppCompatActivity {
                                 mStreamLiveStatus.setVisibility(View.VISIBLE);
 
                                 mBroadcastControlButton.setImageResource(R.drawable.baseline_videocam_off_white_24);
-                                mSettingsButton.setVisibility(View.GONE);
                                 startTimer();//start the recording duration
                             }
                             else {
@@ -293,7 +348,6 @@ public class StreamActivity extends AppCompatActivity {
 
             mStreamLiveStatus.setVisibility(View.GONE);
             mStreamLiveStatus.setText(R.string.live_indicator);
-            mSettingsButton.setVisibility(View.VISIBLE);
 
             stopTimer();
             mLiveVideoBroadcaster.stopBroadcasting();

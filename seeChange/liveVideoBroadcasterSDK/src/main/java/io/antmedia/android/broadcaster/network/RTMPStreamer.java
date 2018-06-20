@@ -1,6 +1,7 @@
 package io.antmedia.android.broadcaster.network;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.Handler;
@@ -18,6 +19,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import io.antmedia.android.broadcaster.network.IMediaMuxer;
+import io.antmedia.android.broadcaster.security.HashSigner;
+import io.antmedia.android.broadcaster.security.RequestTask;
 
 /**
  * Created by faraklit on 09.02.2016.
@@ -38,11 +41,13 @@ public class RTMPStreamer extends Handler implements IMediaMuxer  {
     private int lastSentFrameTimeStamp = -1;
     private Object frameSynchronized = new Object();
     private boolean isConnected = false;
+    private Context c;
+    private String signedDataToSend;
 
     public class Frame {
-        byte[] data;
-        int timestamp;
-        int length;
+        public byte[] data;
+        public int timestamp;
+        public int length;
 
         public Frame(byte[] data, int length, int timestamp) {
             this.data = data;
@@ -78,7 +83,8 @@ public class RTMPStreamer extends Handler implements IMediaMuxer  {
      *
      * @param url of the stream
      */
-    public boolean open(String url) {
+    public boolean open(String url, Context c) {
+        this.c = c;
         frameCount = 0;
         lastVideoFrameTimeStamp = 0;
         lastAudioFrameTimeStamp = 0;
@@ -253,7 +259,26 @@ public class RTMPStreamer extends Handler implements IMediaMuxer  {
                         frame.timestamp++;
                     }
                     if (isConnected) {
+                        RequestTask task = new RequestTask();
+
+                        HashSigner hashSigner = new HashSigner();
+                        try {
+                            signedDataToSend = hashSigner.sign(c, frame);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
                         int result = rtmpMuxer.writeVideo(frame.data, 0, frame.length, frame.timestamp);
+
+                        Log.i("RESULT", Integer.toString(result));
+
+                        try {
+                            task.post("http://145.49.56.105:8000/LiveApp/", c, frame, signedDataToSend);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+
                         if (DEBUG) {
                             Log.d(TAG, "send video result: " + result + " time:" + frame.timestamp + " length:" + frame.length);
                         }

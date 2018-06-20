@@ -1,4 +1,5 @@
-package thecircle.seechange.presentation;
+package thecircle.seechange.presentation.fragment;
+
 
 import android.app.Activity;
 import android.content.SharedPreferences;
@@ -215,7 +216,7 @@ public class ChatFragment extends Fragment {
                     Log.i("CONINFO", "test");
                 }
             });
-    }
+        }
     };
 
     private Emitter.Listener roomJoined = new Emitter.Listener() {

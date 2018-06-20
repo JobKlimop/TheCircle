@@ -1,228 +1,265 @@
 package thecircle.seechange.presentation;
 
 import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
+import android.content.SharedPreferences;
+import android.media.Image;
+import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.Editable;
-import android.text.TextUtils;
-import android.text.TextWatcher;
+import android.util.Base64;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
 
+import io.socket.engineio.client.transports.WebSocket;
+
+
+import org.java_websocket.WebSocketFactory;
+import org.java_websocket.client.DefaultSSLWebSocketClientFactory;
+import org.java_websocket.client.WebSocketClient;
+import org.java_websocket.drafts.Draft;
+import org.java_websocket.drafts.Draft_10;
+import org.java_websocket.drafts.Draft_17;
+import org.java_websocket.drafts.Draft_76;
+import org.java_websocket.handshake.ServerHandshake;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.URI;
 import java.net.URISyntaxException;
+import java.security.InvalidKeyException;
+import java.security.KeyFactory;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.Signature;
+import java.security.SignatureException;
+import java.security.interfaces.RSAPrivateKey;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.ArrayList;
+import java.util.Formatter;
 import java.util.List;
 
-import thecircle.seechange.Adapters.MessageAdapter;
+import javax.net.ssl.SSLContext;
+
+
+
 import thecircle.seechange.R;
 import thecircle.seechange.domain.Constants;
 import thecircle.seechange.domain.Message;
 
+import static io.antmedia.android.broadcaster.security.HashGenerator.bin2hex;
 
-/**
- * A chat fragment containing messages view and input form.
- */
 public class ChatFragment extends Fragment {
-
-    private static final String TAG = "ChatFragment";
-
-    private static final int REQUEST_LOGIN = 0;
-
-    private static final int TYPING_TIMER_LENGTH = 600;
-
-    private RecyclerView mMessagesView;
-    private EditText mInputMessageView;
+    private WebSocketClient mWebSocketClient;
+    private ImageButton send_button;
     private List<Message> mMessages = new ArrayList<Message>();
     private RecyclerView.Adapter mAdapter;
-    private boolean mTyping = false;
-    private Handler mTypingHandler = new Handler();
-    private String mUsername;
-    private Socket mSocket;
-    {
-        try {
-            mSocket = IO.socket(Constants.CHAT_SERVER_URL);
-        } catch (Exception e) {
-            Log.d("Error", "" + e);
-        }
-    }
-
-    private Boolean isConnected = true;
-
-    public ChatFragment() {
-        super();
-    }
-
-
-    // This event fires 1st, before creation of fragment or any views
-    // The onAttach method is called when the Fragment instance is associated with an Activity.
-    // This does not mean the Activity is fully initialized.
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        mAdapter = new MessageAdapter(context, mMessages);
-        if (context instanceof Activity){
-            //this.listener = (MainActivity) context;
-        }
-    }
-
+    private RecyclerView mMessagesView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
-
-        mSocket.connect();
-        mSocket.on(Socket.EVENT_CONNECT,onConnect);
-        mSocket.on(Socket.EVENT_DISCONNECT,onDisconnect);
-        mSocket.on(Socket.EVENT_CONNECT_ERROR, onConnectError);
-        mSocket.on(Socket.EVENT_CONNECT_TIMEOUT, onConnectError);
-        mSocket.on("new message", onNewMessage);
-        mSocket.on("user joined", onUserJoined);
-        mSocket.on("user left", onUserLeft);
-        mSocket.on("typing", onTyping);
-        mSocket.on("stop typing", onStopTyping);
-        mSocket.connect();
-//
-        startSignIn();
+//        connectWebSocket("http://145.49.24.24:3000");
+        connectWebSocket("http://the-circle-chat.herokuapp.com");
     }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_chat, container, false);
 
-        return inflater.inflate(R.layout.fragment_chat, container, false);
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-
-        mSocket.disconnect();
-
-        mSocket.off(Socket.EVENT_CONNECT, onConnect);
-        mSocket.off(Socket.EVENT_DISCONNECT, onDisconnect);
-        mSocket.off(Socket.EVENT_CONNECT_ERROR, onConnectError);
-        mSocket.off(Socket.EVENT_CONNECT_TIMEOUT, onConnectError);
-        mSocket.off("new message", onNewMessage);
-        mSocket.off("user joined", onUserJoined);
-        mSocket.off("user left", onUserLeft);
-        mSocket.off("typing", onTyping);
-        mSocket.off("stop typing", onStopTyping);
-
-    }
-
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        mMessagesView = (RecyclerView) view.findViewById(R.id.messages);
-        mMessagesView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mMessagesView.setAdapter(mAdapter);
-
-        mInputMessageView = (EditText) view.findViewById(R.id.message_input);
-        mInputMessageView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int id, KeyEvent event) {
-                if (id == R.id.send || id == EditorInfo.IME_NULL) {
-                    attemptSend();
-                    return true;
-                }
-                return false;
-            }
-        });
-        mInputMessageView.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (null == mUsername) return;
-                if (!mSocket.connected()) return;
-
-                if (!mTyping) {
-                    mTyping = true;
-                    mSocket.emit("typing");
-                }
-
-                mTypingHandler.removeCallbacks(onTypingTimeout);
-                mTypingHandler.postDelayed(onTypingTimeout, TYPING_TIMER_LENGTH);
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-            }
-        });
-
+//        addLog(getResources().getString(R.string.message_welcome));
+        final EditText message_input = (EditText) view.findViewById(R.id.message_input);
         ImageButton sendButton = (ImageButton) view.findViewById(R.id.send_button);
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                attemptSend();
+                try {
+                    sendMessage(message_input.getText().toString());
+                    message_input.setText("");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                } catch (NoSuchAlgorithmException e) {
+                    e.printStackTrace();
+                } catch (SignatureException e) {
+                    e.printStackTrace();
+                } catch (InvalidKeyException e) {
+                    e.printStackTrace();
+                } catch (InvalidKeySpecException e) {
+                    e.printStackTrace();
+                }
             }
         });
+
+        return view;
+
+
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (Activity.RESULT_OK != resultCode) {
-            getActivity().finish();
-            return;
+    private Socket mSocket;
+    private void connectWebSocket(String websocketEndPointUrl){
+//
+//        URI uri;
+//        try {
+//            Log.i("Uri try and catch", "Does it come here?");
+////            mSocket = IO.socket("https://the-circle-chat.herokuapp.com");
+////            mSocket.connect();
+////            websocketEndPointUrl="ws://the-circle-chat.herokuapp.com/";
+//            websocketEndPointUrl="ws://145.49.24.24:3000";
+//
+//            uri = new URI(websocketEndPointUrl);
+//            //uri = new URI("ws://the-circle-chat.herokuapp.com");
+//        } catch (URISyntaxException e) {
+//            e.printStackTrace();
+//            return;
+//        }
+//
+//        mWebSocketClient = new WebSocketClient(uri, new Draft_10()) {
+//            @Override
+//            public void onOpen(ServerHandshake serverHandshake) {
+//                Log.i("Websocket", "Opened");
+//                mWebSocketClient.onMessage("message");
+//                mWebSocketClient.emit("connection_info");
+//            }
+//
+//            @Override
+//            public void onMessage(String s) {
+//                final String message = s;
+//                getActivity().runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        TextView textView = (TextView) getView().findViewById(R.id.messages);
+//                        textView.setText(textView.getText() + "\n" + message);
+//                    }
+//                });
+//            }
+//
+//            @Override
+//            public void onClose(int i, String s, boolean b) {
+//                Log.i("Websocket", "Closed " + s);
+//            }
+//
+//            @Override
+//            public void onError(Exception e) {
+//                Log.i("Websocket", "Error " + e.getMessage());
+//            }
+//        };
+////        if (websocketEndPointUrl.indexOf("ws") == 0)
+////        {
+////            try {
+////                SSLContext sslContext = SSLContext.getDefault();
+////                mWebSocketClient.setWebSocketFactory(new DefaultSSLWebSocketClientFactory(sslContext));
+////            } catch (NoSuchAlgorithmException e) {
+////                e.printStackTrace();
+////            }
+////        }
+//        mWebSocketClient.connect();
+        try{
+            IO.Options opt = new IO.Options();
+            opt.transports = new String[] {WebSocket.NAME};
+            opt.secure = false;
+            mSocket = IO.socket(websocketEndPointUrl, opt);
+            mSocket.on("connect", onConnection);
+            mSocket.on("connection_info", onConnectionInfo);
+            mSocket.on("room_joined", roomJoined);
+            mSocket.on("verified", verified);
+            mSocket.on("message", onMessage);
+
+            mSocket.connect();
+        }catch(Exception E){
+            E.printStackTrace();
+            Log.i("ERROR", E.toString());
         }
 
-        mUsername = data.getStringExtra("username");
-        int connectedUsers = data.getIntExtra("connectedUsers", 1);
-
-        addLog(getResources().getString(R.string.message_welcome));
-        addParticipantsLog(connectedUsers);
     }
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        inflater.inflate(R.menu.menu_main, menu);
-    }
+    private Emitter.Listener onConnection = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        SharedPreferences prefs = getContext().getSharedPreferences("CREDENTIALS", getContext().MODE_PRIVATE);
+                        String crt = prefs.getString("crt", null);
+                        JSONObject object = new JSONObject("{ \"certificate\" : \"" + crt + "\"}");
+                        mSocket.emit("verify_identity",  object);
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_leave) {
-            leave();
-            return true;
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
         }
+    };
 
-        return super.onOptionsItemSelected(item);
+    private Emitter.Listener onConnectionInfo = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    JSONObject data = (JSONObject) args[0];
+                    Log.i("CONINFO", data.toString());
+                    Log.i("CONINFO", "test");
+                }
+            });
     }
+    };
 
+    private Emitter.Listener roomJoined = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    String data = (String) args[0];
+
+                    Log.i("ROOMJOIN", data.toString());
+                }
+            });
+        }
+    };
+
+    private Emitter.Listener verified = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Boolean data = (Boolean) args[0];
+                    SharedPreferences prefs = getContext().getSharedPreferences("CREDENTIALS", getContext().MODE_PRIVATE);
+                    String username = prefs.getString("username", null);
+                    mSocket.emit("join_room", username);
+                }
+            });
+        }
+    };
+
+    private Emitter.Listener onMessage = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    JSONObject data = (JSONObject) args[0];
+                    Log.i("MESSAGE", data.toString());
+
+                }
+            });
+        }
+    };
     private void addLog(String message) {
         mMessages.add(new Message.Builder(Message.TYPE_LOG)
                 .message(message).build());
@@ -230,238 +267,60 @@ public class ChatFragment extends Fragment {
         scrollToBottom();
     }
 
-    private void addParticipantsLog(int connectedUsers) {
-        addLog(getResources().getQuantityString(R.plurals.message_participants, connectedUsers, connectedUsers));
-    }
-
-    private void addMessage(String username, String message) {
-        mMessages.add(new Message.Builder(Message.TYPE_MESSAGE)
-                .username(username).message(message).build());
-        mAdapter.notifyItemInserted(mMessages.size() - 1);
-        scrollToBottom();
-    }
-
-    private void addTyping(String username) {
-        mMessages.add(new Message.Builder(Message.TYPE_ACTION)
-                .username(username).build());
-        mAdapter.notifyItemInserted(mMessages.size() - 1);
-        scrollToBottom();
-    }
-
-    private void removeTyping(String username) {
-        for (int i = mMessages.size() - 1; i >= 0; i--) {
-            Message message = mMessages.get(i);
-            if (message.getType() == Message.TYPE_ACTION && message.getUsername().equals(username)) {
-                mMessages.remove(i);
-                mAdapter.notifyItemRemoved(i);
-            }
-        }
-    }
-
-    private void attemptSend() {
-        if (null == mUsername) return;
-        if (!mSocket.connected()) return;
-
-        mTyping = false;
-
-        String message = mInputMessageView.getText().toString().trim();
-        if (TextUtils.isEmpty(message)) {
-            mInputMessageView.requestFocus();
-            return;
-        }
-
-        mInputMessageView.setText("");
-        addMessage(mUsername, message);
-
-        // perform the sending message attempt.
-        mSocket.emit("new message", message);
-    }
-
-    private void startSignIn() {
-        mUsername = null;
-        Intent intent = new Intent(getActivity(), LoginActivity.class);
-        startActivityForResult(intent, REQUEST_LOGIN);
-    }
-
-    private void leave() {
-        mUsername = null;
-        mSocket.disconnect();
-        mSocket.connect();
-        startSignIn();
-    }
-
     private void scrollToBottom() {
         mMessagesView.scrollToPosition(mAdapter.getItemCount() - 1);
     }
 
-    private Emitter.Listener onConnect = new Emitter.Listener() {
-        @Override
-        public void call(Object... args) {
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    if(!isConnected) {
-                        if(null!=mUsername)
-                            mSocket.emit("add user", mUsername);
-                        Toast.makeText(getActivity().getApplicationContext(),
-                                R.string.connect, Toast.LENGTH_LONG).show();
-                        isConnected = true;
-                    }
-                }
-            });
+    public void sendMessage(String message) throws JSONException, InvalidKeySpecException, NoSuchAlgorithmException, InvalidKeyException, SignatureException {
+        SharedPreferences prefs = getContext().getSharedPreferences("CREDENTIALS", getContext().MODE_PRIVATE);
+        String username = prefs.getString("username", null);
+        String crt = prefs.getString("crt", null);
+        long unixTime = System.currentTimeMillis() / 1000L;
+
+        JSONObject data = new JSONObject();
+        data.put("room", username);
+        data.put("timestamp", unixTime);
+        data.put("content", message);
+        data.put("certificate", crt);
+        data.put("signature", sign(message + unixTime));
+        mSocket.emit("message", data);
+    }
+
+    public String sign(String message) throws NoSuchAlgorithmException, SignatureException, InvalidKeySpecException, InvalidKeyException {
+        MessageDigest digest = null;
+        SharedPreferences prefs = getContext().getSharedPreferences("CREDENTIALS", getContext().MODE_PRIVATE);
+        String privateKeyString = prefs.getString("privatekey", "unavailabe");
+
+        privateKeyString = privateKeyString.replace("-----BEGIN RSA PRIVATE KEY-----", "");
+        privateKeyString = privateKeyString.replace("-----END RSA PRIVATE KEY-----", "");
+
+        KeyFactory kf = KeyFactory.getInstance("RSA");
+
+        byte[] secret = Base64.decode(privateKeyString, Base64.NO_PADDING);
+        RSAPrivateKey privateKeyObject = (RSAPrivateKey) kf.generatePrivate(new PKCS8EncodedKeySpec(secret));
+
+
+        try {
+            digest = MessageDigest.getInstance("SHA-256");
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
         }
-    };
 
-    private Emitter.Listener onDisconnect = new Emitter.Listener() {
-        @Override
-        public void call(Object... args) {
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Log.i(TAG, "diconnected");
-                    isConnected = false;
-                    Toast.makeText(getActivity().getApplicationContext(),
-                            R.string.disconnect, Toast.LENGTH_LONG).show();
-                }
-            });
+        byte[] datahashed = digest.digest(message.getBytes());
+        String hexhash = bin2hex(datahashed);
+
+        Signature sig = Signature.getInstance("SHA256WithRSA");
+        sig.initSign(privateKeyObject);
+        sig.update(hexhash.getBytes());
+        byte[] signedData = sig.sign();
+
+        Formatter formatter = new Formatter();
+        for (byte b : signedData) {
+            formatter.format("%02x", b);
         }
-    };
+        String charactersToSend = formatter.toString();
 
-    private Emitter.Listener onConnectError = new Emitter.Listener() {
-        @Override
-        public void call(Object... args) {
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Log.e(TAG, "Error connecting");
-                    Toast.makeText(getActivity().getApplicationContext(),
-                            R.string.error_connect, Toast.LENGTH_LONG).show();
-                }
-            });
-        }
-    };
+        return charactersToSend;
+    }
 
-    private Emitter.Listener onNewMessage = new Emitter.Listener() {
-        @Override
-        public void call(final Object... args) {
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    JSONObject data = (JSONObject) args[0];
-                    String username;
-                    String message;
-                    try {
-                        username = data.getString("username");
-                        message = data.getString("message");
-                    } catch (JSONException e) {
-                        Log.e(TAG, e.getMessage());
-                        return;
-                    }
-
-                    removeTyping(username);
-                    addMessage(username, message);
-                }
-            });
-        }
-    };
-
-    private Emitter.Listener onUserJoined = new Emitter.Listener() {
-        @Override
-        public void call(final Object... args) {
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    JSONObject data = (JSONObject) args[0];
-                    String username;
-                    int connectedUsers;
-                    try {
-                        username = data.getString("username");
-                        connectedUsers = data.getInt("connectedUsers");
-                    } catch (JSONException e) {
-                        Log.e(TAG, e.getMessage());
-                        return;
-                    }
-
-                    addLog(getResources().getString(R.string.message_user_joined, username));
-                    addParticipantsLog(connectedUsers);
-                }
-            });
-        }
-    };
-
-    private Emitter.Listener onUserLeft = new Emitter.Listener() {
-        @Override
-        public void call(final Object... args) {
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    JSONObject data = (JSONObject) args[0];
-                    String username;
-                    int connectedUsers;
-                    try {
-                        username = data.getString("username");
-                        connectedUsers = data.getInt("connectedUsers");
-                    } catch (JSONException e) {
-                        Log.e(TAG, e.getMessage());
-                        return;
-                    }
-
-                    addLog(getResources().getString(R.string.message_user_left, username));
-                    addParticipantsLog(connectedUsers);
-                    removeTyping(username);
-                }
-            });
-        }
-    };
-
-    private Emitter.Listener onTyping = new Emitter.Listener() {
-        @Override
-        public void call(final Object... args) {
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    JSONObject data = (JSONObject) args[0];
-                    String username;
-                    try {
-                        username = data.getString("username");
-                    } catch (JSONException e) {
-                        Log.e(TAG, e.getMessage());
-                        return;
-                    }
-                    addTyping(username);
-                }
-            });
-        }
-    };
-
-    private Emitter.Listener onStopTyping = new Emitter.Listener() {
-        @Override
-        public void call(final Object... args) {
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    JSONObject data = (JSONObject) args[0];
-                    String username;
-                    try {
-                        username = data.getString("username");
-                    } catch (JSONException e) {
-                        Log.e(TAG, e.getMessage());
-                        return;
-                    }
-                    removeTyping(username);
-                }
-            });
-        }
-    };
-
-    private Runnable onTypingTimeout = new Runnable() {
-        @Override
-        public void run() {
-            if (!mTyping) return;
-
-            mTyping = false;
-            mSocket.emit("stop typing");
-        }
-    };
 }
-

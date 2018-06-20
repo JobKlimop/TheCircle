@@ -68,11 +68,6 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        try {
-            mSocket = IO.socket(Constants.CHAT_SERVER_URL);
-        } catch (Exception e) {
-            Log.d("Error", "" + e);
-        }
 
         // Set up the User form.
         mUsernameView = (AutoCompleteTextView) findViewById(R.id.username);
@@ -101,8 +96,6 @@ public class LoginActivity extends AppCompatActivity {
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
 
-        mSocket.connect();
-//        mSocket.on("login", onLogin);
     }
 
     public void LoginRequest(final String username, final String password) {
@@ -147,7 +140,8 @@ public class LoginActivity extends AppCompatActivity {
                             SharedPreferences.Editor editor = getSharedPreferences("CREDENTIALS", MODE_PRIVATE).edit();
                             editor.putString("token", response.getString("token"));
                             editor.putString("privatekey", response.getJSONObject("crt").getString("private"));
-                            editor.putString("privatekey", response.getJSONObject("crt").getString("cert"));
+                            editor.putString("crt", response.getJSONObject("crt").getString("cert"));
+                            editor.putString("username", username);
                             editor.apply();
 
                         } catch (JSONException e) {
@@ -157,11 +151,9 @@ public class LoginActivity extends AppCompatActivity {
                         // login succes
                         showProgress(true);
 
-                        mSocket.on("login", onLogin);
-//                        Intent i = new Intent(getApplicationContext(), ChatActivity.class);
-//                        startActivity(i);
-
-//                        finish();
+                        Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
+                        intent.putExtra("username", mUsername);
+                        startActivity(intent);
 
                     }
                 }, new Response.ErrorListener() {
@@ -170,12 +162,6 @@ public class LoginActivity extends AppCompatActivity {
                 Toast.makeText(LoginActivity.this, "Username or password is incorrect", Toast.LENGTH_SHORT).show();
             }
         });
-
-//        mSocket.on("login", onLogin);
-        String username2 = mUsernameView.getText().toString();
-        mUsername = username2;
-
-        mSocket.emit("add user", username2);
 
         queue.add(request);
     }
@@ -192,9 +178,12 @@ public class LoginActivity extends AppCompatActivity {
                 return;
             }
 
-            Intent intent = new Intent();
+            Log.i("LOGIN", "login evet");
+
+            Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
             intent.putExtra("username", mUsername);
             intent.putExtra("connectedUsers", connectedUsers);
+            startActivity(intent);
             setResult(RESULT_OK, intent);
             finish();
         }

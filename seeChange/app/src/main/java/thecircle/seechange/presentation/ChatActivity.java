@@ -14,14 +14,14 @@ public class ChatActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
-//        ChatFragment frg=new ChatFragment();
-//        FragmentManager manager=getSupportFragmentManager();//create an instance of fragment manager
-//
-//        FragmentTransaction transaction=manager.beginTransaction();//create an instance of Fragment-transaction
-//
-//        transaction.add(R.id.container, frg, "Frag_Top_tag");
-//
-//
-//        transaction.commit();
+        ChatFragment frg = new ChatFragment();
+        FragmentManager manager = getSupportFragmentManager();//create an instance of fragment manager
+
+        FragmentTransaction transaction = manager.beginTransaction();//create an instance of Fragment-transaction
+
+        transaction.add(R.id.container, frg, "ChatFragment");
+
+
+        transaction.commit();
     }
 }

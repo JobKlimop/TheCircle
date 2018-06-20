@@ -312,7 +312,7 @@ public class StreamActivity extends AppCompatActivity {
         {
             if (mLiveVideoBroadcaster != null) {
                 if (!mLiveVideoBroadcaster.isConnected()) {
-                    String streamName = mStreamNameEditText.getText().toString();
+
 
                     new AsyncTask<String, String, Boolean>() {
                         ContentLoadingProgressBar
@@ -337,7 +337,6 @@ public class StreamActivity extends AppCompatActivity {
                                 mStreamLiveStatus.setVisibility(View.VISIBLE);
 
                                 mBroadcastControlButton.setImageResource(R.drawable.baseline_videocam_off_white_24);
-                                mSettingsButton.setVisibility(View.GONE);
                                 startTimer();//start the recording duration
                             }
                             else {
@@ -346,7 +345,7 @@ public class StreamActivity extends AppCompatActivity {
                                 triggerStopRecording();
                             }
                         }
-                    }.execute(RTMP_BASE_URL + streamName);
+                    }.execute(RTMP_BASE_URL);
                 }
                 else {
                     Snackbar.make(mRootView, R.string.streaming_not_finished, Snackbar.LENGTH_LONG).show();
@@ -370,7 +369,6 @@ public class StreamActivity extends AppCompatActivity {
 
             mStreamLiveStatus.setVisibility(View.GONE);
             mStreamLiveStatus.setText(R.string.live_indicator);
-            mSettingsButton.setVisibility(View.VISIBLE);
 
             stopTimer();
             mLiveVideoBroadcaster.stopBroadcasting();

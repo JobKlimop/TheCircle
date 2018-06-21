@@ -49,8 +49,8 @@ public class ChatFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        connectWebSocket("http://145.49.24.24:3000");
-//        connectWebSocket("http://the-circle-chat3.herokuapp.com");
+//        connectWebSocket("http://145.49.24.24:3000");
+        connectWebSocket("http://the-circle-chat3.herokuapp.com");
 
 
     }
@@ -219,7 +219,7 @@ public class ChatFragment extends Fragment {
         if(message != null){
             SharedPreferences prefs = getContext().getSharedPreferences("CREDENTIALS", getContext().MODE_PRIVATE);
             String username = prefs.getString("username", null);
-            String crt = prefs.getString("crt", null);
+            String crt = prefs.getString("certificate", null);
             long unixTime = System.currentTimeMillis() / 1000L;
 
             mSocket.emit("connection_info");

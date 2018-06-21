@@ -3,6 +3,7 @@ package io.antmedia.android.broadcaster.network;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Binder;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -22,6 +23,7 @@ import io.antmedia.android.broadcaster.network.IMediaMuxer;
 import io.antmedia.android.broadcaster.security.HashSigner;
 import io.antmedia.android.broadcaster.security.RequestTask;
 
+import static android.content.Context.MODE_PRIVATE;
 import static io.antmedia.android.broadcaster.security.RequestTask.JSON;
 
 /**
@@ -263,9 +265,12 @@ public class RTMPStreamer extends Handler implements IMediaMuxer  {
                     if (isConnected) {
                         RequestTask task = new RequestTask();
 
+                        SharedPreferences prefs = c.getSharedPreferences("CREDENTIALS", MODE_PRIVATE);
+                        String username = prefs.getString("username", "unavailable");
+
                         HashSigner hashSigner = new HashSigner();
                         try {
-                            signedDataToSend = hashSigner.sign(c, frame);
+                            signedDataToSend = hashSigner.sign(c, frame, username);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -275,7 +280,7 @@ public class RTMPStreamer extends Handler implements IMediaMuxer  {
                         Log.i("RESULT", Integer.toString(result));
 
                         try {
-                            String url = "http://145.49.27.5:8000/api/streams/live/mika";
+                            String url = "http://145.49.27.5:8000/api/streams/live/" + username;
 //                            String url = "http://192.168.2.6:8000/live/mika";
 //                            String oldUrl = "http://145.49.56.105:8000/LiveApp/";
                             task.post(url, c, frame, signedDataToSend);

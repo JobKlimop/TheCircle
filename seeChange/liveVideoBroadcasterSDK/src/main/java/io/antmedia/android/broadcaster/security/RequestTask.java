@@ -1,6 +1,7 @@
 package io.antmedia.android.broadcaster.security;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
 
 import org.json.JSONException;
@@ -15,6 +16,8 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+import static android.content.Context.MODE_PRIVATE;
+
 public class RequestTask {
 
     public static final String TAG = RequestTask.class.getSimpleName();
@@ -27,8 +30,10 @@ public class RequestTask {
 
         // TODO: Implelement hashing of specified code
 //        String json = "{ hash: " + hash + "}";
+        SharedPreferences prefs = c.getSharedPreferences("CREDENTIALS", MODE_PRIVATE);
+        String username = prefs.getString("username", "unavailable");
 
-        String json = "{'hash':'" + hash + "'}";
+        String json = "{'hash':'" + hash + "'," + "'username':'" + username + "'}";
         JSONObject jsonObject = null;
         RequestBody body = RequestBody.create(JSON, json);
         // Try-catch block to make json object

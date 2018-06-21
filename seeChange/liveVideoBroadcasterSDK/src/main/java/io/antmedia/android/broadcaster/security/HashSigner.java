@@ -35,27 +35,57 @@ public class HashSigner {
 
     String dataToHash;
     int dataToHashInt;
+
+    String mUsername;
+    int mFrameLength;
+
     private HashGenerator hashGen = new HashGenerator();
 
     /*
     * Sign the frame given. Both hash it here, and sign it.
     */
-    public String sign(Context c, RTMPStreamer.Frame frame) throws InvalidKeySpecException, SignatureException, NoSuchAlgorithmException, InvalidKeyException, IOException {
+
+    public String sign(Context c, RTMPStreamer.Frame frame, String username) throws InvalidKeySpecException, SignatureException, NoSuchAlgorithmException, InvalidKeyException, IOException {
 
         String dataToReturn;
 
-        // Choose data from frame.obj to hash, and do so using the hashGen
-        dataToHashInt = frame.length + frame.timestamp + 5;
-        dataToHash = Integer.toString(dataToHashInt);
-        Log.i("DATATOHASH", dataToHash);
+        mFrameLength = frame.length + 5;
+        mUsername = username;
 
-        String hash = hashGen.getHash(dataToHash);
+        String hash = hashGen.getHash(mUsername + mFrameLength);
+
+
+        // Choose data from frame.obj to hash, and do so using the hashGen
+//        dataToHashInt = frame.length + frame.timestamp + 5;
+//        dataToHash = Integer.toString(dataToHashInt);
+//        Log.i("DATATOHASH", dataToHash);
+//        Log.i("LEN", "" + frame.length);
+//
+//        String hash = hashGen.getHash(dataToHash);
 
         // TODO: Following the hash, encrypt it using the private key from the local storage
         dataToReturn = signHash(hash, c);
 
         return dataToReturn;
     }
+
+//    public String sign(Context c, RTMPStreamer.Frame frame) throws InvalidKeySpecException, SignatureException, NoSuchAlgorithmException, InvalidKeyException, IOException {
+//
+//        String dataToReturn;
+//
+//        // Choose data from frame.obj to hash, and do so using the hashGen
+//        dataToHashInt = frame.length + frame.timestamp + 5;
+//        dataToHash = Integer.toString(dataToHashInt);
+//        Log.i("DATATOHASH", dataToHash);
+//        Log.i("LEN", "" + frame.length);
+//
+//        String hash = hashGen.getHash(dataToHash);
+//
+//        // TODO: Following the hash, encrypt it using the private key from the local storage
+//        dataToReturn = signHash(hash, c);
+//
+//        return dataToReturn;
+//    }
 
     public String signHash(String hash, Context c) {
 

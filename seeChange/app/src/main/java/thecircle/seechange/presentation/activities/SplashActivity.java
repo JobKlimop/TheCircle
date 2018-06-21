@@ -8,8 +8,6 @@ import android.content.Intent;
 import thecircle.seechange.R;
 
 public class SplashActivity extends AppCompatActivity {
-    protected int _splashTime = 2000;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

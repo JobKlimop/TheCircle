@@ -21,9 +21,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#77000000" />
-    <!--
-   </com.google.android.exoplayer.AspectRatioFrameLayout>
-    -->
 
 
     <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -45,7 +42,7 @@
                 app:tabMode="fixed" />
 
             <android.support.v7.widget.Toolbar
-                android:id="@+id/toolbar1"
+                android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="?attr/colorPrimary"
@@ -55,25 +52,12 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentTop="true"
                     android:orientation="horizontal"
-                    android:padding="4dp"
                     android:visibility="visible">
-                    <!--<ImageButton-->
-                    <!--android:id="@+id/settings_button"-->
-                    <!--android:layout_width="wrap_content"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:adjustViewBounds="true"-->
-                    <!--android:onClick="showSetResolutionDialog"-->
-                    <!--android:src="@drawable/ic_settings_white_24dp"-->
-                    <!--style="?borderlessButtonStyle"-->
-                    <!--/>-->
-
 
                     <TextView
                         android:id="@+id/stream_live_status"
-                        android:layout_width="wrap_content"
+                        android:layout_width="100dp"
                         android:layout_height="wrap_content"
                         android:layout_gravity="top|end"
                         android:layout_marginBottom="8dp"
@@ -83,10 +67,32 @@
                         android:gravity="center"
                         android:padding="5dp"
                         android:text="@string/live_indicator"
-                        android:visibility="gone" />
+                        android:visibility="invisible" />
 
                     <android.support.v4.widget.Space
-                        android:layout_width="100dp"
+                        android:layout_width="20dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1" />
+
+                    <ImageView
+                        android:id="@+id/imageView"
+                        android:layout_width="30dp"
+                        android:layout_height="match_parent"
+                        android:tint="@color/username8"
+                        app:srcCompat="@drawable/watching" />
+
+                    <TextView
+                        android:id="@+id/viewersTV"
+                        android:layout_width="75dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical|center_horizontal"
+                        android:text="@string/viewers"
+                        android:textSize="14sp"
+                        android:visibility="visible" />
+
+                    <android.support.v4.widget.Space
+                        android:layout_width="20dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1" />
 

@@ -1,53 +1,27 @@
 package thecircle.seechange.presentation.fragment;
 
-
-import android.app.Activity;
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.media.Image;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.ScrollView;
-import android.widget.TextView;
 
 import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
-
 import io.socket.engineio.client.transports.WebSocket;
 
-
-import org.java_websocket.WebSocketFactory;
-import org.java_websocket.client.DefaultSSLWebSocketClientFactory;
-import org.java_websocket.client.WebSocketClient;
-import org.java_websocket.drafts.Draft;
-import org.java_websocket.drafts.Draft_10;
-import org.java_websocket.drafts.Draft_17;
-import org.java_websocket.drafts.Draft_76;
-import org.java_websocket.handshake.ServerHandshake;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.security.InvalidKeyException;
 import java.security.KeyFactory;
 import java.security.MessageDigest;
@@ -59,29 +33,17 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.ArrayList;
 import java.util.Formatter;
-import java.util.List;
-import java.util.Random;
-
-import javax.net.ssl.SSLContext;
-
 
 import thecircle.seechange.Adapters.ChatMessageAdapter;
 import thecircle.seechange.R;
-import thecircle.seechange.domain.Constants;
 import thecircle.seechange.domain.Message;
 
 import static io.antmedia.android.broadcaster.security.HashGenerator.bin2hex;
 
 public class ChatFragment extends Fragment {
-    private WebSocketClient mWebSocketClient;
-    private ImageButton send_button;
-    private List<Message> mMessages = new ArrayList<Message>();
-    private RecyclerView.Adapter mAdapter;
-    private RecyclerView mMessagesView;
     private ListView messageList;
     private ArrayList<Message> messageArray = new ArrayList<Message>();
     ArrayAdapter<Message> adapter;
-    private LinearLayout linearLayout;
 
 
     @Override
@@ -102,10 +64,7 @@ public class ChatFragment extends Fragment {
         messageList = (ListView) view.findViewById(R.id.messages);
         messageList.setAdapter(adapter);
 
-        final LinearLayout linearLayout = (LinearLayout) view.findViewById(R.id.linearLayout);
         final EditText message_input = (EditText) view.findViewById(R.id.message_input);
-        final TextView usernameTV = (TextView) view.findViewById(R.id.username);
-        closeKeyboard(getActivity(), message_input.getWindowToken());
 
         ImageButton sendButton = (ImageButton) view.findViewById(R.id.send_button);
         sendButton.setOnClickListener(new View.OnClickListener() {
@@ -246,10 +205,6 @@ public class ChatFragment extends Fragment {
         }
     };
 
-    private void scrollToBottom() {
-        mMessagesView.scrollToPosition(mAdapter.getItemCount() - 1);
-    }
-
     public void sendMessage(String message) throws JSONException, InvalidKeySpecException, NoSuchAlgorithmException, InvalidKeyException, SignatureException {
         if(message != null){
             SharedPreferences prefs = getContext().getSharedPreferences("CREDENTIALS", getContext().MODE_PRIVATE);
@@ -302,10 +257,6 @@ public class ChatFragment extends Fragment {
         String charactersToSend = formatter.toString();
 
         return charactersToSend;
-    }
-    public static void closeKeyboard(Context c, IBinder windowToken) {
-        InputMethodManager mgr = (InputMethodManager) c.getSystemService(Context.INPUT_METHOD_SERVICE);
-        mgr.hideSoftInputFromWindow(windowToken, 0);
     }
 
     @Override

@@ -7,6 +7,7 @@ import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.hardware.Camera;
 import android.net.Uri;
@@ -27,12 +28,9 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.ContentLoadingProgressBar;
 import android.support.v7.app.AppCompatActivity;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -45,7 +43,6 @@ import io.antmedia.android.broadcaster.ILiveVideoBroadcaster;
 import io.antmedia.android.broadcaster.LiveVideoBroadcaster;
 import io.antmedia.android.broadcaster.utils.Resolution;
 import thecircle.seechange.R;
-import thecircle.seechange.logic.AccountConnectionManager;
 import thecircle.seechange.presentation.fragment.StreamFragment;
 import thecircle.seechange.presentation.fragment.ChatFragment;
 
@@ -55,11 +52,9 @@ import android.support.v7.widget.Toolbar;
 public class StreamActivity extends AppCompatActivity {
     private ViewGroup mRootView;
     boolean mIsRecording = false;
-    private EditText mStreamNameEditText;
     private Timer mTimer;
     private long mElapsedTime;
     public TimerHandler mTimerHandler;
-    private ImageButton mSettingsButton;
     private Intent mLiveVideoBroadcasterServiceIntent;
     private TextView mStreamLiveStatus;
     private GLSurfaceView mGLView;
@@ -67,14 +62,13 @@ public class StreamActivity extends AppCompatActivity {
     private ImageButton mBroadcastControlButton;
     private TabLayout tabLayout;
     private ViewPager viewPager;
-    public static final String RTMP_BASE_URL = "rtmp://145.49.56.105/LiveApp/";
-    /** Defines callbacks for service binding, passed to bindService() */
+    public static String RTMP_BASE_URL = "rtmp://145.49.7.220/live/";
+
     private ServiceConnection mConnection = new ServiceConnection() {
 
         @Override
         public void onServiceConnected(ComponentName className,
                                        IBinder service) {
-            // We've bound to LocalService, cast the IBinder and get LocalService instance
             LiveVideoBroadcaster.LocalBinder binder = (LiveVideoBroadcaster.LocalBinder) service;
             if (mLiveVideoBroadcaster == null) {
                 mLiveVideoBroadcaster = binder.getService();
@@ -97,22 +91,15 @@ public class StreamActivity extends AppCompatActivity {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.root_layout, fragment);
         transaction.commit();
-        // Hide title
-        //requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-//        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        //binding on resume not to having leaked service connection
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
         mLiveVideoBroadcasterServiceIntent = new Intent(this, LiveVideoBroadcaster.class);
-        //this makes service do its job until done
         startService(mLiveVideoBroadcasterServiceIntent);
 
         setContentView(R.layout.activity_stream);
 
-        // Find the toolbar view inside the activity layout
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        // Sets the Toolbar to act as the ActionBar for this Activity window.
-        // Make sure the toolbar exists in the activity and is not null
         setSupportActionBar(toolbar);
 
         viewPager = (ViewPager) findViewById(R.id.viewpager);
@@ -122,20 +109,20 @@ public class StreamActivity extends AppCompatActivity {
         tabLayout.setupWithViewPager(viewPager);
 
         mTimerHandler = new TimerHandler();
-        mStreamNameEditText = (EditText) findViewById(R.id.stream_name_edit_text);
 
         mRootView = (ViewGroup)findViewById(R.id.root_layout);
-//        mSettingsButton = (ImageButton)findViewById(R.id.settings_button);
         mStreamLiveStatus = (TextView) findViewById(R.id.stream_live_status);
 
         mBroadcastControlButton = (ImageButton) findViewById(R.id.toggle_broadcasting);
 
-        // Configure the GLSurfaceView.  This will start the Renderer thread, with an
-        // appropriate EGL activity.
         mGLView = (GLSurfaceView) findViewById(R.id.cameraPreview_surfaceView);
         if (mGLView != null) {
             mGLView.setEGLContextClientVersion(2);     // select GLES 2.0
         }
+
+        SharedPreferences prefs = getSharedPreferences("CREDENTIALS", MODE_PRIVATE);
+        String username = prefs.getString("username", "unavailable");
+        RTMP_BASE_URL  += username;
     }
     private void setupViewPager(ViewPager viewPager) {
         StreamActivity.ViewPagerAdapter adapter = new StreamActivity.ViewPagerAdapter(getSupportFragmentManager());
@@ -184,7 +171,6 @@ public class StreamActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        //this lets activity bind
         bindService(mLiveVideoBroadcasterServiceIntent, mConnection, 0);
 
     }
@@ -212,15 +198,11 @@ public class StreamActivity extends AppCompatActivity {
                                     public void onClick(DialogInterface dialog, int which) {
 
                                         try {
-                                            //Open the specific App Info page:
                                             Intent intent = new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
                                             intent.setData(Uri.parse("package:" + getApplicationContext().getPackageName()));
                                             startActivity(intent);
 
                                         } catch ( ActivityNotFoundException e ) {
-                                            //e.printStackTrace();
-
-                                            //Open the generic Apps page:
                                             Intent intent = new Intent(android.provider.Settings.ACTION_MANAGE_APPLICATIONS_SETTINGS);
                                             startActivity(intent);
 
@@ -258,29 +240,6 @@ public class StreamActivity extends AppCompatActivity {
 
     }
 
-//    public void showSetResolutionDialog(View v) {
-//
-//        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-//        Fragment fragmentDialog = getSupportFragmentManager().findFragmentByTag("dialog");
-//        if (fragmentDialog != null) {
-//
-//            ft.remove(fragmentDialog);
-//        }
-//
-//        ArrayList<Resolution> sizeList = mLiveVideoBroadcaster.getPreviewSizeList();
-//
-//
-//        if (sizeList != null && sizeList.size() > 0) {
-//            mCameraResolutionsDialog = new CameraResolutionsFragment();
-//
-//            mCameraResolutionsDialog.setCameraResolutions(sizeList, mLiveVideoBroadcaster.getPreviewSize());
-//            mCameraResolutionsDialog.show(ft, "resolutiton_dialog");
-//        }
-//        else {
-//            Snackbar.make(mRootView, "No resolution available",Snackbar.LENGTH_LONG).show();
-//        }
-//
-//    }
 
     public void toggleBroadcasting(View v) {
         if (!mIsRecording)
@@ -352,7 +311,6 @@ public class StreamActivity extends AppCompatActivity {
         mIsRecording = false;
     }
 
-    //This method starts a mTimer and updates the textview to show elapsed time for recording
     public void startTimer() {
 
         if(mTimer == null) {
@@ -363,7 +321,7 @@ public class StreamActivity extends AppCompatActivity {
         mTimer.scheduleAtFixedRate(new TimerTask() {
 
             public void run() {
-                mElapsedTime += 1; //increase every sec
+                mElapsedTime += 1;
                 mTimerHandler.obtainMessage(TimerHandler.INCREASE_TIMER).sendToTarget();
 
                 if (mLiveVideoBroadcaster == null || !mLiveVideoBroadcaster.isConnected()) {
@@ -410,7 +368,7 @@ public class StreamActivity extends AppCompatActivity {
 
     public static String getDurationString(int seconds) {
 
-        if(seconds < 0 || seconds > 2000000)//there is an codec problem and duration is not set correctly,so display meaningfull string
+        if(seconds < 0 || seconds > 2000000)
             seconds = 0;
         int hours = seconds / 3600;
         int minutes = (seconds % 3600) / 60;

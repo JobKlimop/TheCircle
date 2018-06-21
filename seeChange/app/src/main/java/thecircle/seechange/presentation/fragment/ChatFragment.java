@@ -49,8 +49,8 @@ public class ChatFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        connectWebSocket("http://145.49.24.24:3000");
-        connectWebSocket("http://the-circle-chat.herokuapp.com");
+        connectWebSocket("http://145.49.24.24:3000");
+//        connectWebSocket("http://the-circle-chat3.herokuapp.com");
 
 
     }
@@ -91,10 +91,7 @@ public class ChatFragment extends Fragment {
                 }
             }
         });
-
         return view;
-
-
     }
 
     private Socket mSocket;
@@ -121,21 +118,26 @@ public class ChatFragment extends Fragment {
     private Emitter.Listener onConnection = new Emitter.Listener() {
         @Override
         public void call(final Object... args) {
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        SharedPreferences prefs = getContext().getSharedPreferences("CREDENTIALS", getContext().MODE_PRIVATE);
-                        String crt = prefs.getString("crt", null);
-                        JSONObject object = new JSONObject("{ \"certificate\" : \"" + crt + "\"}");
-                        mSocket.emit("verify_identity",  object);
-                        Log.i("CONNECT", "connected");
+            if(getActivity() != null){
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            SharedPreferences prefs = getContext().getSharedPreferences("CREDENTIALS", getContext().MODE_PRIVATE);
+                            String crt = prefs.getString("certificate", null);
+                            JSONObject object = new JSONObject("{ \"certificate\" : \"" + crt + "\"}");
+                            mSocket.emit("verify_identity",  object);
+                            Log.i("CONNECT", "connected");
 
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
                     }
-                }
-            });
+                });
+            }
+                return;
+
         }
     };
 
@@ -156,52 +158,60 @@ public class ChatFragment extends Fragment {
     private Emitter.Listener roomJoined = new Emitter.Listener() {
         @Override
         public void call(final Object... args) {
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    String data = (String) args[0];
+            if(getActivity() != null) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        String data = (String) args[0];
 
-                    Log.i("ROOMJOIN", data.toString());
-                }
-            });
+                        Log.i("ROOMJOIN", data.toString());
+                    }
+                });
+            }
         }
     };
 
     private Emitter.Listener verified = new Emitter.Listener() {
         @Override
         public void call(final Object... args) {
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Boolean data = (Boolean) args[0];
-                    SharedPreferences prefs = getContext().getSharedPreferences("CREDENTIALS", getContext().MODE_PRIVATE);
-                    String username = prefs.getString("username", null);
-                    mSocket.emit("join_room", username);
-                }
-            });
+            if (getActivity() != null) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Boolean data = (Boolean) args[0];
+                        SharedPreferences prefs = getContext().getSharedPreferences("CREDENTIALS", getContext().MODE_PRIVATE);
+                        String username = prefs.getString("username", null);
+                        Log.i("USERNAME", username);
+                        mSocket.emit("join_room", username);
+                    }
+                });
+
+            }
         }
     };
 
     private Emitter.Listener onMessage = new Emitter.Listener() {
         @Override
         public void call(final Object... args) {
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    JSONObject data = (JSONObject) args[0];
-                    Log.i("MESSAGE", data.toString());
-                    try {
-                        Message messsage = new Message(data.getString("content").toString(), data.getString("user").toString() );
-                        messageArray.add(messsage);
-                        adapter.notifyDataSetChanged();
-                        messageList.smoothScrollToPosition(adapter.getCount(), -1);
+            if(getActivity() != null) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        JSONObject data = (JSONObject) args[0];
+                        Log.i("MESSAGE", data.toString());
+                        try {
+                            Message messsage = new Message(data.getString("content").toString(), data.getString("user").toString());
+                            messageArray.add(messsage);
+                            adapter.notifyDataSetChanged();
+                            messageList.smoothScrollToPosition(adapter.getCount(), -1);
 
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
                     }
-
-                }
-            });
+                });
+            }
         }
     };
 
@@ -211,6 +221,8 @@ public class ChatFragment extends Fragment {
             String username = prefs.getString("username", null);
             String crt = prefs.getString("crt", null);
             long unixTime = System.currentTimeMillis() / 1000L;
+
+            mSocket.emit("connection_info");
 
             JSONObject data = new JSONObject();
             data.put("room", username);
@@ -226,7 +238,6 @@ public class ChatFragment extends Fragment {
         MessageDigest digest = null;
         SharedPreferences prefs = getContext().getSharedPreferences("CREDENTIALS", getContext().MODE_PRIVATE);
         String privateKeyString = prefs.getString("privatekey", "unavailabe");
-        Log.i("TAG", privateKeyString);
         privateKeyString = privateKeyString.replace("-----BEGIN RSA PRIVATE KEY-----", "");
         privateKeyString = privateKeyString.replace("-----END RSA PRIVATE KEY-----", "");
 

@@ -259,24 +259,24 @@ public class RTMPStreamer extends Handler implements IMediaMuxer  {
                         frame.timestamp++;
                     }
                     if (isConnected) {
-                        RequestTask task = new RequestTask();
-
-                        HashSigner hashSigner = new HashSigner();
-                        try {
-                            signedDataToSend = hashSigner.sign(c, frame);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
+//                        RequestTask task = new RequestTask();
+//
+//                        HashSigner hashSigner = new HashSigner();
+//                        try {
+//                            signedDataToSend = hashSigner.sign(c, frame);
+//                        } catch (Exception e) {
+//                            e.printStackTrace();
+//                        }
 
                         int result = rtmpMuxer.writeVideo(frame.data, 0, frame.length, frame.timestamp);
 
-                        Log.i("RESULT", Integer.toString(result));
-
-                        try {
-                            task.post("http://145.49.56.105:8000/LiveApp/", c, frame, signedDataToSend);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
+//                        Log.i("RESULT", Integer.toString(result));
+//
+//                        try {
+//                            task.post("http://145.49.56.105:8000/LiveApp/", c, frame, signedDataToSend);
+//                        } catch (Exception e) {
+//                            e.printStackTrace();
+//                        }
 
 
                         if (DEBUG) {

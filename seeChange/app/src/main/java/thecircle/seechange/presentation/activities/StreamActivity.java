@@ -3,9 +3,12 @@ package thecircle.seechange.presentation.activities;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -28,6 +31,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.ContentLoadingProgressBar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -35,9 +39,11 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.stream.Stream;
 
 import io.antmedia.android.broadcaster.ILiveVideoBroadcaster;
 import io.antmedia.android.broadcaster.LiveVideoBroadcaster;
@@ -47,6 +53,18 @@ import thecircle.seechange.presentation.fragment.StreamFragment;
 import thecircle.seechange.presentation.fragment.ChatFragment;
 
 import android.support.v7.widget.Toolbar;
+import android.widget.Toast;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 
 public class StreamActivity extends AppCompatActivity {
@@ -62,7 +80,9 @@ public class StreamActivity extends AppCompatActivity {
     private ImageButton mBroadcastControlButton;
     private TabLayout tabLayout;
     private ViewPager viewPager;
-    public static String RTMP_BASE_URL = "rtmp://145.49.7.220/live/";
+    private BroadcastReceiver receiver;
+    IntentFilter filter = new IntentFilter();
+    public static String RTMP_BASE_URL = "rtmp://145.49.27.5/live/";
 
     private ServiceConnection mConnection = new ServiceConnection() {
 
@@ -110,7 +130,7 @@ public class StreamActivity extends AppCompatActivity {
 
         mTimerHandler = new TimerHandler();
 
-        mRootView = (ViewGroup)findViewById(R.id.root_layout);
+        mRootView = (ViewGroup) findViewById(R.id.root_layout);
         mStreamLiveStatus = (TextView) findViewById(R.id.stream_live_status);
 
         mBroadcastControlButton = (ImageButton) findViewById(R.id.toggle_broadcasting);
@@ -119,11 +139,63 @@ public class StreamActivity extends AppCompatActivity {
         if (mGLView != null) {
             mGLView.setEGLContextClientVersion(2);     // select GLES 2.0
         }
-
         SharedPreferences prefs = getSharedPreferences("CREDENTIALS", MODE_PRIVATE);
         String username = prefs.getString("username", "unavailable");
-        RTMP_BASE_URL  += username;
+        RTMP_BASE_URL += username;
+
+        filter.addAction("android.intent.action.TIME_TICK");
+
+        receiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+
+
+                RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
+                String url = "http://145.49.7.220/api/streams/live/mika";
+
+                final JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
+                        new Response.Listener<JSONObject>() {
+                            @Override
+                            public void onResponse(JSONObject response) {
+                                TextView viewers = (TextView) findViewById(R.id.viewersTV);
+                                try {
+                                    viewers.setText(response.getString("subscribers"));
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+
+
+                            }
+                        }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                    }
+                });
+                queue.add(request);
+                Log.v("QUEUE", "Request sent");
+            }
+
+        };
+        registerReceiver(receiver, filter);
+
     }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (StreamActivity.this == null) {
+            unregisterReceiver(receiver);
+        }
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        registerReceiver(receiver, filter);
+    }
+
     private void setupViewPager(ViewPager viewPager) {
         StreamActivity.ViewPagerAdapter adapter = new StreamActivity.ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(new StreamFragment(), "Stream");
@@ -221,6 +293,7 @@ public class StreamActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         mLiveVideoBroadcaster.pause();
+        unregisterReceiver(receiver);
     }
 
 
@@ -301,7 +374,7 @@ public class StreamActivity extends AppCompatActivity {
         if (mIsRecording) {
             mBroadcastControlButton.setImageResource(R.drawable.baseline_videocam_white_24);
 
-            mStreamLiveStatus.setVisibility(View.GONE);
+            mStreamLiveStatus.setVisibility(View.INVISIBLE);
             mStreamLiveStatus.setText(R.string.live_indicator);
 
             stopTimer();

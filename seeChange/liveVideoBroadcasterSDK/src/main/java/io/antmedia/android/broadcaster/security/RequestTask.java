@@ -1,6 +1,10 @@
 package io.antmedia.android.broadcaster.security;
 
 import android.content.Context;
+import android.util.Log;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 
@@ -13,6 +17,7 @@ import okhttp3.Response;
 
 public class RequestTask {
 
+    public static final String TAG = RequestTask.class.getSimpleName();
     public static final MediaType JSON
             = MediaType.parse("application/json; charset=utf-8");
 
@@ -21,9 +26,20 @@ public class RequestTask {
     public String post(String url, Context c, RTMPStreamer.Frame frame, String hash) throws IOException {
 
         // TODO: Implelement hashing of specified code
-        String json = "{hash: " + hash + "}";
+//        String json = "{ hash: " + hash + "}";
 
+        String json = "{'hash':'" + hash + "'}";
+        JSONObject jsonObject = null;
         RequestBody body = RequestBody.create(JSON, json);
+        // Try-catch block to make json object
+        try {
+            jsonObject = new JSONObject(json);
+            body = RequestBody.create(JSON, jsonObject.toString());
+            Log.d(TAG, "" + body.contentType());
+            Log.d(TAG, json);
+        } catch (JSONException je) {
+            je.printStackTrace();
+        }
         Request request = new Request.Builder()
                 .url(url)
                 .post(body)

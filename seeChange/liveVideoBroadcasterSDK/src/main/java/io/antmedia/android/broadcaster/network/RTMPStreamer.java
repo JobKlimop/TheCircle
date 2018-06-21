@@ -22,6 +22,8 @@ import io.antmedia.android.broadcaster.network.IMediaMuxer;
 import io.antmedia.android.broadcaster.security.HashSigner;
 import io.antmedia.android.broadcaster.security.RequestTask;
 
+import static io.antmedia.android.broadcaster.security.RequestTask.JSON;
+
 /**
  * Created by faraklit on 09.02.2016.
  */
@@ -273,7 +275,10 @@ public class RTMPStreamer extends Handler implements IMediaMuxer  {
                         Log.i("RESULT", Integer.toString(result));
 
                         try {
-                            task.post("http://145.49.56.105:8000/LiveApp/", c, frame, signedDataToSend);
+                            String url = "http://145.49.27.5:8000/live/mika";
+//                            String url = "http://192.168.2.6:8000/live/mika";
+//                            String oldUrl = "http://145.49.56.105:8000/LiveApp/";
+                            task.post(url, c, frame, signedDataToSend);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }

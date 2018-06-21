@@ -62,7 +62,8 @@ public class StreamActivity extends AppCompatActivity {
     private ImageButton mBroadcastControlButton;
     private TabLayout tabLayout;
     private ViewPager viewPager;
-    public static String RTMP_BASE_URL = "rtmp://145.49.7.220/live/";
+//    public static String RTMP_BASE_URL = "rtmp://145.49.7.220/live/";
+    public static String RTMP_BASE_URL = "rtmp://145.49.27.5/live/";
 
     private ServiceConnection mConnection = new ServiceConnection() {
 
